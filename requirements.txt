@@ -1,0 +1,5 @@
+hanlp
+lark-parser
+python-dateutil
+pytest
+cn2an
