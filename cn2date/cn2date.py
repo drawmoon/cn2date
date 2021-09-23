@@ -1,7 +1,7 @@
 import re
 
 from datetime import datetime
-from typing import List, Tuple, Any, Union
+from typing import List, Tuple, Union
 from lark import Lark
 
 from .visitors import DateTreeVisitor
@@ -31,7 +31,10 @@ date_grammar = r"""
 
 
 class Cn2Date:
-    def parse(self, inputs: str) -> Tuple[str, str]:
+    def parse(self, inputs: str) -> Union[Tuple[str, str], None]:
+        if inputs is None or inputs.isspace():
+            return None
+
         # 解析语句
         tree = Lark(date_grammar).parse(inputs)
         visitor = DateTreeVisitor()
@@ -55,12 +58,11 @@ class Cn2Date:
 
     @staticmethod
     def __parse_cn_word(inputs: str) -> List[datetime]:
-        # 创建处理器
         processor = create_processor(inputs)
         if processor is None:
             return []
 
-        args: Union[Tuple[Any], None] = None
+        args = []
 
         # 处理 参数，例如 前n年、后n年...
         side_words = ["前", "后", "内"]
@@ -71,20 +73,18 @@ class Cn2Date:
             if result:
                 digit_str = result.group("digit")
                 inputs = inputs.replace(digit_str, "几")
-                digit = str2digit(digit_str)
-                args = (digit,)
+                args.append(str2digit(digit_str))
 
-        result_lst = processor.process(inputs) if args is None else processor.process(inputs, *args)
-        return result_lst
+        return processor.process(inputs, *tuple(args))
 
     def __parse_comb_date(self, date_lst: List[datetime], comb_str: str) -> List[datetime]:
         result = self.__parse_cn_word(comb_str)
         if len(result) == 0:
             pass
-        rst = []
+        date_list = []
         for i, dt in enumerate(date_lst):
             rpc_date = result[i]
-            rst.append(dt.replace(month=rpc_date.month, day=rpc_date.day))
+            date_list.append(dt.replace(month=rpc_date.month, day=rpc_date.day))
         if result[0].year == result[1].year:
-            rst[1] = rst[1].replace(year=rst[0].year)
-        return rst
+            date_list[1] = date_list[1].replace(year=date_list[0].year)
+        return date_list

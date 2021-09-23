@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from cn2date.util import now, build_date
 
 
-class CnWordProcessor:
+class Processor:
     synonym_dict: Dict[str, List[str]] = {"本": ["当前", "这个"], "内": ["以来"]}
 
     def __init__(self, synonym: Optional[Dict[str, List[str]]] = None):
@@ -25,10 +25,10 @@ class CnWordProcessor:
 
 
 # noinspection PyPep8Naming,NonAsciiCharacters
-class YearCnWordProcessor(CnWordProcessor):
+class YearProcessor(Processor):
     def __init__(self):
         synonym = {"今": ["本"], "去年": ["上年"], "明年": ["下年"]}
-        super(YearCnWordProcessor, self).__init__(synonym)
+        super(YearProcessor, self).__init__(synonym)
 
     _this_year = now().replace(month=1, day=1)
 
@@ -99,7 +99,7 @@ class YearCnWordProcessor(CnWordProcessor):
 
 
 # noinspection PyPep8Naming,NonAsciiCharacters
-class MonthCnWordProcessor(CnWordProcessor):
+class MonthProcessor(Processor):
     _this_month = now().replace(day=1)
 
     def 本月(self):
@@ -155,10 +155,10 @@ class MonthCnWordProcessor(CnWordProcessor):
 
 
 # noinspection PyPep8Naming,NonAsciiCharacters
-class DayCnWordProcessor(CnWordProcessor):
+class DayProcessor(Processor):
     def __init__(self):
         synonym = {"天": ["日"]}
-        super(DayCnWordProcessor, self).__init__(synonym)
+        super(DayProcessor, self).__init__(synonym)
 
     _today = now()
 
@@ -233,10 +233,10 @@ class DayCnWordProcessor(CnWordProcessor):
 
 
 # noinspection PyPep8Naming,NonAsciiCharacters
-class QuarterCnWordProcessor(CnWordProcessor):
+class QuarterProcessor(Processor):
     def __init__(self):
         synonym = {"一": ["1"], "二": ["2"], "三": ["3"], "四": ["4"]}
-        super(QuarterCnWordProcessor, self).__init__(synonym)
+        super(QuarterProcessor, self).__init__(synonym)
 
     _this_month = now().replace(day=1)
 
@@ -247,7 +247,7 @@ class QuarterCnWordProcessor(CnWordProcessor):
     def process(self, s: str, *args):
         if len(s) == 1 and s.isdigit():
             s += "季度"
-        return super(QuarterCnWordProcessor, self).process(s, *args)
+        return super(QuarterProcessor, self).process(s, *args)
 
     def 本季度(self):
         this_quarter = self._get_quarter(self._this_month.month)
@@ -330,10 +330,10 @@ class QuarterCnWordProcessor(CnWordProcessor):
 
 
 # noinspection PyPep8Naming,NonAsciiCharacters
-class WeekCnWordProcessor(CnWordProcessor):
+class WeekProcessor(Processor):
     def __init__(self):
         synonym = {"周": ["星期"]}
-        super(WeekCnWordProcessor, self).__init__(synonym)
+        super(WeekProcessor, self).__init__(synonym)
 
     _today = now()
     # 计算出本周第一天
@@ -395,18 +395,18 @@ class WeekCnWordProcessor(CnWordProcessor):
         return [start_date, end_date]
 
 
-def create_processor(inputs: str) -> CnWordProcessor:
-    processor: Union[CnWordProcessor, None] = None
+def create_processor(inputs: str) -> Processor:
+    processor: Union[Processor, None] = None
 
     if "年" in inputs:
-        processor = YearCnWordProcessor()
+        processor = YearProcessor()
     elif "季度" in inputs:
-        processor = QuarterCnWordProcessor()
+        processor = QuarterProcessor()
     elif "月" in inputs:
-        processor = MonthCnWordProcessor()
+        processor = MonthProcessor()
     elif "周" in inputs or "星期" in inputs:
-        processor = WeekCnWordProcessor()
+        processor = WeekProcessor()
     elif "天" in inputs or "日" in inputs or "午" in inputs:
-        processor = DayCnWordProcessor()
+        processor = DayProcessor()
 
     return processor
