@@ -1,6 +1,9 @@
-from cn2date.cn2date import parse
+from cn2date.cn2date import Cn2Date
 
 from util import han_lp, merge
+
+
+parse = Cn2Date().parse
 
 
 def process_input(text):

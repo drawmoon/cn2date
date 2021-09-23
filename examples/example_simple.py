@@ -1,5 +1,7 @@
-from cn2date.cn2date import parse
+from cn2date.cn2date import Cn2Date
 
+
+parse = Cn2Date().parse
 
 words = [
     "2021-9-17",
