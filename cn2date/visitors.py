@@ -1,46 +1,53 @@
 from lark import Visitor, Tree, Token
-from typing import Dict, Union
+from typing import Dict, Tuple, Union
 
-from cn2date.util import now
+from cn2date.util import now, str2digit
+
+
+DateCompose = Tuple[Dict[str, int], str]
+Date = Union[Dict[str, int], DateCompose, str]
+VisitorOptions = Union[Date, None]
 
 
 class DateTreeVisitor(Visitor):
-    date_dict: Dict[str, str]
-    comb_part: Union[str, None]
-    cn_word_part: Union[str, None]
+    options: VisitorOptions
 
     def __init__(self):
-        self.date_dict = {}
-        self.comb_part = None
-        self.cn_word_part = None
+        self.options = {}
+
+    def date(self, tree: Tree) -> None:
+        if len(self.options) == 0:
+            self.options = self.__scan_value(tree)
 
     def years(self, tree: Tree) -> None:
-        self.date_dict["year"] = self.__scan_values(tree)
+        self.options["year"] = str2digit(self.__scan_value(tree), "year")
 
     def months(self, tree: Tree) -> None:
         today = now()
-        keys = self.date_dict.keys()
+        keys = self.options.keys()
+
         if "year" not in keys:
-            self.date_dict["year"] = str(today.year)
-        self.date_dict["month"] = self.__scan_values(tree)
+            self.options["year"] = today.year
+
+        self.options["month"] = str2digit(self.__scan_value(tree))
 
     def days(self, tree: Tree) -> None:
         today = now()
-        keys = self.date_dict.keys()
+        keys = self.options.keys()
+
         if "year" not in keys:
-            self.date_dict["year"] = str(today.year)
+            self.options["year"] = today.year
+
         if "month" not in keys:
-            self.date_dict["month"] = str(today.month).rjust(2, "0")
-        self.date_dict["day"] = self.__scan_values(tree)
+            self.options["month"] = today.month
 
-    def comb(self, tree: Tree) -> None:
-        self.comb_part = self.__scan_values(tree)
+        self.options["day"] = str2digit(self.__scan_value(tree))
 
-    def cn_word(self, tree: Tree) -> None:
-        self.cn_word_part = self.__scan_values(tree)
+    def comb_part(self, tree: Tree) -> None:
+        self.options = (self.options, self.__scan_value(tree))
 
     @staticmethod
-    def __scan_values(tree: Tree) -> str:
+    def __scan_value(tree: Tree) -> str:
         val = ""
         for child in tree.children:
             if not isinstance(child, Token):

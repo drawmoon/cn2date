@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional, Union
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from cn2date.util import now, build_date
@@ -11,7 +12,7 @@ class Processor:
         if synonym is not None:
             self.synonym_dict = dict(self.synonym_dict, **synonym)
 
-    def process(self, s: str, *args):
+    def process(self, s: str, *args) -> Union[List[datetime], None]:
         # 处理代名词
         if self.synonym_dict is not None:
             for k, synonyms in self.synonym_dict.items():
@@ -21,7 +22,7 @@ class Processor:
             fn = getattr(self, s)
             return fn(*args) if len(args) > 0 else fn()
         except AttributeError:
-            return []
+            return None
 
 
 # noinspection PyPep8Naming,NonAsciiCharacters

@@ -11,36 +11,37 @@ parse = Cn2Date().parse
 
 
 class DateTreeVisitorForTest(Visitor):
-    year_part: Union[str, None]
-    month_part: Union[str, None]
-    day_part: Union[str, None]
-    comb_part: Union[str, None]
-    cn_word_part: Union[str, None]
+    year: Union[str, None]
+    month: Union[str, None]
+    day: Union[str, None]
+    comb: Union[str, None]
+    cn_word: Union[str, None]
 
     def __init__(self):
-        self.year_part = None
-        self.month_part = None
-        self.day_part = None
-        self.comb_part = None
-        self.cn_word_part = None
+        self.year = None
+        self.month = None
+        self.day = None
+        self.comb = None
+        self.cn_word = None
+
+    def date(self, tree: Tree) -> None:
+        if self.year is None and self.month is None and self.day is None:
+            self.cn_word = self.__scan_value(tree)
 
     def years(self, tree: Tree) -> None:
-        self.year_part = self.__scan_values(tree)
+        self.year = self.__scan_value(tree)
 
     def months(self, tree: Tree) -> None:
-        self.month_part = self.__scan_values(tree)
+        self.month = self.__scan_value(tree)
 
     def days(self, tree: Tree) -> None:
-        self.day_part = self.__scan_values(tree)
+        self.day = self.__scan_value(tree)
 
-    def comb(self, tree: Tree) -> None:
-        self.comb_part = self.__scan_values(tree)
-
-    def cn_word(self, tree: Tree) -> None:
-        self.cn_word_part = self.__scan_values(tree)
+    def comb_part(self, tree: Tree) -> None:
+        self.comb = self.__scan_value(tree)
 
     @staticmethod
-    def __scan_values(tree: Tree) -> str:
+    def __scan_value(tree: Tree) -> str:
         val = ""
         for child in tree.children:
             if not isinstance(child, Token):
@@ -49,7 +50,7 @@ class DateTreeVisitorForTest(Visitor):
         return val
 
 
-test_lark_parse_testdata_dict = {
+lark_test_data_dict = {
     "完整日期格式": [
         ("2021/9/10", "2021", "9", "10", None, None),
         ("2021/09/10", "2021", "09", "10", None, None),
@@ -425,32 +426,37 @@ test_lark_parse_testdata_dict = {
         ("2个日之内", None, None, None, None, "2日内"),
         ("两个日以来", None, None, None, None, "两日以来"),
         ("2个日以来", None, None, None, None, "2日以来")
+    ],
+    "组合日期格式": [
+        ("2021年上半年", "2021", None, None, "上半年", None),
+        ("2021年第一季度", "2021", None, None, "一季度", None),
+        ("2021年9月7日上午", "2021", "9", "7", "上午", None)
     ]
 }
 
-test_lark_parse_testdata = list(itertools.chain.from_iterable(test_lark_parse_testdata_dict.values()))
+lark_test_data = list(itertools.chain.from_iterable(lark_test_data_dict.values()))
 
 
-@pytest.mark.parametrize("input_str,expected_year,expected_month,expected_day,expected_comb,expected_cnword",
-                         test_lark_parse_testdata,
-                         ids=[i[0] for i in test_lark_parse_testdata])
+@pytest.mark.parametrize("input_str,expected_year,expected_month,expected_day,expected_comb_part,expected_cn_word",
+                         lark_test_data,
+                         ids=[i[0] for i in lark_test_data])
 def test_lark_parse(input_str: str,
                     expected_year: str,
                     expected_month: str,
                     expected_day: str,
-                    expected_comb: str,
-                    expected_cnword: str):
+                    expected_comb_part: str,
+                    expected_cn_word: str):
     tree = Lark(date_grammar).parse(input_str)
     visitor = DateTreeVisitorForTest()
     visitor.visit(tree)
-    assert visitor.year_part == expected_year
-    assert visitor.month_part == expected_month
-    assert visitor.day_part == expected_day
-    assert visitor.comb_part == expected_comb
-    assert visitor.cn_word_part == expected_cnword
+    assert visitor.year == expected_year
+    assert visitor.month == expected_month
+    assert visitor.day == expected_day
+    assert visitor.comb == expected_comb_part
+    assert visitor.cn_word == expected_cn_word
 
 
-parse_testdata_dict = {
+parse_test_data_dict = {
     "年格式": [
         ("2017年", ("2017-01-01 00:00:00", "2018-01-01 00:00:00")),
         ("二零一七年", ("2017-01-01 00:00:00", "2018-01-01 00:00:00")),
@@ -782,10 +788,10 @@ parse_testdata_dict = {
     ]
 }
 
-parse_testdata = list(itertools.chain.from_iterable(parse_testdata_dict.values()))
+parse_test_data = list(itertools.chain.from_iterable(parse_test_data_dict.values()))
 
 
-@pytest.mark.parametrize("input_str,expected", parse_testdata, ids=[i[0] for i in parse_testdata])
+@pytest.mark.parametrize("input_str,expected", parse_test_data, ids=[i[0] for i in parse_test_data])
 def test_parse(input_str: str, expected: Tuple[str, str]):
     result = parse(input_str)
     assert len(result) == len(expected)

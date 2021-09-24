@@ -1,6 +1,6 @@
 import cn2an
 
-from typing import Optional, List
+from typing import Optional, List, Union
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -20,7 +20,7 @@ def str2digit(s: str, typ: Optional[str] = None) -> int:
     return int(opt)
 
 
-def build_date(year: int, month: Optional[int] = None, day: Optional[int] = None) -> List[datetime]:
+def build_date(year: int, month: Optional[int] = None, day: Optional[int] = None) -> Union[List[datetime], None]:
     # 处理 年月日
     if year is not None and month is not None and day is not None:
         start_date = datetime(year, month, day)
@@ -39,7 +39,7 @@ def build_date(year: int, month: Optional[int] = None, day: Optional[int] = None
         end_date = start_date + relativedelta(years=1)
         return [start_date, end_date]
 
-    return []
+    return None
 
 
 def dateformat(dt: datetime) -> str:
