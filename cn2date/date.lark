@@ -1,0 +1,22 @@
+start: date
+
+date: years
+    | years? months
+    | (years? months)? days "当天"?
+    | _cn_word
+    | years? months? (days "当天"?)? comb_part
+
+_cn_word: "第"? (WORD | WORD WORD)? DIGIT? "个"? UNIT ("份" | "度" | "以" | "之")? WORD?
+
+comb_part: WORD+ UNIT | "第"? DIGIT "个"? UNIT
+
+years : DIGIT DIGIT (DIGIT DIGIT)? ("年" | "-" | "/")
+months: DIGIT DIGIT? ("月" | "月份" | "-" | "/")
+days  : DIGIT (DIGIT DIGIT?)? ("日" | "号")?
+
+WORD : "今" | "本" | "当" | "这个" | "当前" | "明" | "后" | "昨" | "去" | "上" | "下" | "前" | "后" | "内" | "以来" | "半"
+UNIT : "年" | "季度" | "月" | "周" | "星期" | "天" | "日" | "午"
+DIGIT: /["0-9零一二两三四五六七八九十"]/
+
+// Disregard spaces in text
+%ignore " "

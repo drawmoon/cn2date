@@ -1,13 +1,17 @@
 import itertools
 import pytest
 
+from pathlib import Path
 from lark import Lark, Visitor, Tree, Token
 from typing import Tuple, Union
 
-from cn2date.cn2date import Cn2Date, date_grammar
+from cn2date.cn2date import Cn2Date
 
 
 parse = Cn2Date().parse
+
+lark_file = Path(__file__).parent.parent / "cn2date/date.lark"
+lark_parser = Lark.open(str(lark_file))
 
 
 class DateTreeVisitorForTest(Visitor):
@@ -446,7 +450,7 @@ def test_lark_parse(input_str: str,
                     expected_day: str,
                     expected_comb_part: str,
                     expected_cn_word: str):
-    tree = Lark(date_grammar).parse(input_str)
+    tree = lark_parser.parse(input_str)
     visitor = DateTreeVisitorForTest()
     visitor.visit(tree)
     assert visitor.year == expected_year

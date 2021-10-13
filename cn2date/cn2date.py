@@ -1,5 +1,6 @@
 import re
 
+from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Tuple, Union
 from lark import Lark
@@ -9,39 +10,16 @@ from .util import str2digit, build_date, dateformat
 from .processors import create_processor
 
 
-date_grammar = r"""
-    start: date
-    
-    date: years
-        | years? months
-        | (years? months)? days "当天"?
-        | _cn_word
-        | years? months? (days "当天"?)? comb_part
-    
-    _cn_word: "第"? (WORD | WORD WORD)? DIGIT? "个"? UNIT ("份" | "度" | "以" | "之")? WORD?
-    
-    comb_part: WORD+ UNIT | "第"? DIGIT "个"? UNIT
-    
-    years : DIGIT DIGIT (DIGIT DIGIT)? ("年" | "-" | "/")
-    months: DIGIT DIGIT? ("月" | "月份" | "-" | "/")
-    days  : DIGIT (DIGIT DIGIT?)? ("日" | "号")?
-    
-    WORD : "今" | "本" | "当" | "这个" | "当前" | "明" | "后" | "昨" | "去" | "上" | "下" | "前" | "后" | "内" | "以来" | "半"
-    UNIT : "年" | "季度" | "月" | "周" | "星期" | "天" | "日" | "午"
-    DIGIT: /["0-9零一二两三四五六七八九十"]/
-    
-    // Disregard spaces in text
-    %ignore " "
-"""
-
-
 class Cn2Date:
+    def __init__(self):
+        self.__lark_parser = Lark.open(str(Path(__file__).parent / "date.lark"))
+
     def parse(self, inputs: str) -> Union[Tuple[str, str], None]:
         if inputs is None or inputs.isspace():
             return None
 
         # 解析语句
-        tree = Lark(date_grammar).parse(inputs)
+        tree = self.__lark_parser.parse(inputs)
         visitor = DateTreeVisitor()
         visitor.visit(tree)
 
