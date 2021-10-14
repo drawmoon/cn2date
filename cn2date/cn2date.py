@@ -26,13 +26,13 @@ class Cn2Date:
         if visitor.options is None:
             return None
 
-        # 处理 中文口语
-        if type(visitor.options) == str:
-            result = self.__parse_cn_word(visitor.options)
-
         # 处理 年月日格式
-        elif type(visitor.options) == dict:
+        if type(visitor.options) == dict:
             result = build_date(**visitor.options)
+
+        # 处理 中文口语
+        elif type(visitor.options) == str:
+            result = self.__parse_cn_word(visitor.options)
 
         # 处理 组合日期格式
         else:

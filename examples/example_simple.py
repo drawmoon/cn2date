@@ -1,17 +1,14 @@
-from cn2date.cn2date import Cn2Date
+from cn2date import parse
 
-
-parse = Cn2Date().parse
 
 words = [
     "2021-9-17",
     "2021年9月17日",
     "二零二一年九月十七日",
     "今天",
-    "2020年上半年",
-    "本季度"
+    "本季度",
+    "2020年上半年"
 ]
 
 for word in words:
-    result = parse(word)
-    print(result)
+    print(parse(word))

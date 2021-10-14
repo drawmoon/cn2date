@@ -5,10 +5,8 @@ from pathlib import Path
 from lark import Lark, Visitor, Tree, Token
 from typing import Tuple, Union
 
-from cn2date.cn2date import Cn2Date
+from cn2date import parse
 
-
-parse = Cn2Date().parse
 
 lark_file = Path(__file__).parent.parent / "cn2date/date.lark"
 lark_parser = Lark.open(str(lark_file))
