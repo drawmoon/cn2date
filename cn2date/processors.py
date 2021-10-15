@@ -6,7 +6,7 @@ from cn2date.util import now, build_date
 
 
 class Processor:
-    synonym_dict: Dict[str, List[str]] = {"本": ["当前", "这个"], "内": ["以来"]}
+    synonym_dict: Dict[str, List[str]] = {"本": ["当前", "这个"], "内": ["以内", "之内"], "以前": ["之前"]}
 
     def __init__(self, synonym: Optional[Dict[str, List[str]]] = None):
         if synonym is not None:

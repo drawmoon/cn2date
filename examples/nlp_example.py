@@ -1,9 +1,6 @@
-from cn2date.cn2date import Cn2Date
+from cn2date import parse
 
 from util import han_lp, merge
-
-
-parse = Cn2Date().parse
 
 
 def process_input(text):
@@ -19,13 +16,5 @@ def process_input(text):
 
 input_text = "第四季度总共有多少订单"
 
-input_date = process_input(input_text)
-result = parse(input_date)
-print("解析为查询条件:", end="")
-if None in result:
-    if result[0] is None:
-        print(f"时间 < '{result[1]}'")
-    else:
-        print(f"时间 >= '{result[0]}'")
-else:
-    print(f"时间 >= '{result[0]}' and 时间 < '{result[1]}'")
+word = process_input(input_text)
+print("结果:", parse(word))

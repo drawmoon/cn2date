@@ -2,11 +2,12 @@ import re
 
 from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Tuple, Union
+from dateutil.relativedelta import relativedelta
+from typing import List, Tuple, Union
 from lark import Lark
 
-from .visitors import DateTreeVisitor
-from .util import str2digit, build_date, dateformat
+from .visitors import DateTreeVisitor, DateGroup
+from .util import str2digit, build_date, date_format, now
 from .processors import create_processor
 
 
@@ -23,64 +24,65 @@ class Cn2Date:
         visitor = DateTreeVisitor()
         visitor.visit(tree)
 
-        if visitor.options is None:
-            return None
-
         # 处理 年月日格式
         if type(visitor.options) == dict:
             result = build_date(**visitor.options)
 
         # 处理 中文口语
         elif type(visitor.options) == str:
-            result = self.__parse_cn_word(visitor.options)
+            result = self.__parse_spoken_lang(visitor.options)
 
         # 处理 组合日期格式
         else:
-            result = self.__parse_comb_date(visitor.options[0], visitor.options[1])
+            result = self.__parse_date_group(visitor.options)
 
-        if result is None:
-            return None
-
-        return dateformat(result[0]), dateformat(result[1])
+        return None if result is None else date_format(result[0]), date_format(result[1])
 
     @staticmethod
-    def __parse_cn_word(inputs: str) -> Union[List[datetime], None]:
+    def __parse_spoken_lang(inputs: str) -> Union[List[datetime], None]:
         processor = create_processor(inputs)
         if processor is None:
             return None
 
-        args = []
-
         # 处理 参数，例如 前n年、后n年...
-        side_words = ["前", "后", "内"]
-        if inputs[0] in side_words or inputs[-1] in side_words:
-            rq_pattern = re.compile(
-                r"^(?P<prefix>[前后])?(?P<digit>[0-9零一二两三四五六七八九十])个?(?:[年月周日天]|星期|季度)以?(?P<suffix>[前后内]|以来)?$")
-            result = rq_pattern.search(inputs)
-            if result:
-                digit_str = result.group("digit")
-                inputs = inputs.replace(digit_str, "几")
-                args.append(str2digit(digit_str))
+        args = []
+        rq_pattern = re.compile(
+            r"^(?P<prefix>[前后])?(?P<digit>[0-9零一二两三四五六七八九十]+)个?(?:[年月周日天]|星期|季度)(?P<suffix>[以之]?[前后内来])?$")
+        result = rq_pattern.search(inputs)
+        if result and (result.group("prefix") or result.group("suffix")):
+            digit_str = result.group("digit")
+            inputs = inputs.replace(digit_str, "几")
+            args.append(str2digit(digit_str))
 
         return processor.process(inputs, *tuple(args))
 
-    def __parse_comb_date(self, date_dict: Dict[str, int], comb_str: str) -> Union[List[datetime], None]:
-        result = build_date(**date_dict)
+    def __parse_date_group(self, group: DateGroup) -> Union[List[datetime], None]:
+        (left, right) = group
 
-        if result is None:
+        left_date = build_date(**left) if type(left) == dict else self.__parse_spoken_lang(left)
+        if left_date is None:
             return None
 
-        result2 = self.__parse_cn_word(comb_str)
+        if right in ["以前", "之前"]:
+            return [datetime.min, left_date[0]]
 
-        if len(result2) == 0:
-            pass
+        if right in ["以后", "之后"]:
+            return [left_date[0], datetime.max]
 
-        date_list = []
-        for i, dt in enumerate(result):
-            rpc_date = result2[i]
-            date_list.append(dt.replace(month=rpc_date.month, day=rpc_date.day))
+        if right == "以来":
+            next_day = now() + relativedelta(days=1)
+            return [left_date[0], datetime(next_day.year, next_day.month, next_day.day)]
 
-        if result2[0].year == result2[1].year:
-            date_list[1] = date_list[1].replace(year=date_list[0].year)
+        right_date = self.__parse_spoken_lang(right)
+        if right_date is None:
+            return left_date
 
-        return date_list
+        result: List[datetime] = []
+        for i, dt in enumerate(left_date):
+            rd = right_date[i]
+            result.append(dt.replace(month=rd.month, day=rd.day))
+
+        if right_date[0].year == right_date[1].year:
+            result[1] = result[1].replace(year=result[0].year)
+
+        return result

@@ -42,5 +42,5 @@ def build_date(year: int, month: Optional[int] = None, day: Optional[int] = None
     return None
 
 
-def dateformat(dt: datetime) -> str:
+def date_format(dt: datetime) -> str:
     return dt.strftime("%Y-%m-%d %H:%M:%S")

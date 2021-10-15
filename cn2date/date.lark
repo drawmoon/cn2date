@@ -1,22 +1,37 @@
 start: date
 
-date: years
-    | years? months
-    | (years? months)? days "当天"?
-    | _cn_word
-    | years? months? (days "当天"?)? comb_part
+date: _date
+    | _group
+    | spoken_lang
 
-_cn_word: "第"? (WORD | WORD WORD)? DIGIT? "个"? UNIT ("份" | "度" | "以" | "之")? WORD?
+// 日期组合
+_group: _date next
+    //   | spoken_lang next
 
-comb_part: WORD+ UNIT | "第"? DIGIT "个"? UNIT
+// 日期
+_date: years
+     | years? months
+     | years? months days "当天"?
+     | (years? months days | days) ("日" | "号") "当天"?
 
 years : DIGIT DIGIT (DIGIT DIGIT)? ("年" | "-" | "/")
-months: DIGIT DIGIT? ("月" | "月份" | "-" | "/")
-days  : DIGIT (DIGIT DIGIT?)? ("日" | "号")?
+months: DIGIT DIGIT? ("月" | "-" | "/")
+days  : DIGIT (DIGIT DIGIT?)?
+next  : NEXT_WORD | _spoken_lang
 
-WORD : "今" | "本" | "当" | "这个" | "当前" | "明" | "后" | "昨" | "去" | "上" | "下" | "前" | "后" | "内" | "以来" | "半"
-UNIT : "年" | "季度" | "月" | "周" | "星期" | "天" | "日" | "午"
-DIGIT: /["0-9零一二两三四五六七八九十"]/
+// 口语
+spoken_lang  : _spoken_lang
+_spoken_lang : SPOKEN_FRONT "个"? DATE_UNIT
+             | SPOKEN_FRONT _spoken_digit+ "个"? DATE_UNIT
+             | _spoken_digit "个"? DATE_UNIT SPOKEN_REAR?
+_spoken_digit: DIGIT | SPOKEN_DIGIT
 
-// Disregard spaces in text
-%ignore " "
+SPOKEN_FRONT: "今" | "本" | "当前" | "这个" | "明" | "昨" | "去" | "前" | "后" | "上半" | "下半" | "上" | "下"
+SPOKEN_REAR : NEXT_WORD | "前" | "后" | "内" | "以内" | "之内"
+DATE_UNIT   : "年" | "季度" | "月" | "周" | "星期" | "天" | "日" | "午"
+NEXT_WORD   : "以来" | "以前" | "以后" | "之前" | "之后"
+SPOKEN_DIGIT: "两"
+DIGIT       : /["0-9零一二三四五六七八九十"]/
+
+// 忽略的字符
+%ignore " " | "份" | "度" | "第"
