@@ -67,7 +67,7 @@ class Cn2Date:
             return [datetime.min, left_date[0]]
 
         if right in ["以后", "之后"]:
-            return [left_date[0], datetime.max]
+            return [left_date[0] + relativedelta(years=1), datetime.max]
 
         if right == "以来":
             next_day = now() + relativedelta(days=1)
