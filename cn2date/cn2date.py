@@ -15,7 +15,7 @@ class Cn2Date:
     def __init__(self):
         self.__lark_parser = Lark.open(str(Path(__file__).parent / "date.lark"))
 
-    def parse(self, inputs: str) -> Union[Tuple[str, str], None]:
+    def parse(self, inputs: str) -> Union[Tuple[Union[str, None], Union[str, None]], None]:
         if inputs is None or inputs.isspace():
             return None
 
@@ -56,7 +56,7 @@ class Cn2Date:
 
         return processor.process(inputs, *tuple(args))
 
-    def __parse_date_group(self, group: DateGroup) -> Union[List[datetime], None]:
+    def __parse_date_group(self, group: DateGroup) -> Union[List[Union[datetime, None]], None]:
         (left, right) = group
 
         left_date = build_date(**left) if type(left) == dict else self.__parse_spoken_lang(left)
@@ -64,10 +64,10 @@ class Cn2Date:
             return None
 
         if right in ["以前", "之前"]:
-            return [datetime.min, left_date[0]]
+            return [None, left_date[0]]
 
         if right in ["以后", "之后"]:
-            return [left_date[0] + relativedelta(years=1), datetime.max]
+            return [left_date[0] + relativedelta(years=1), None]
 
         if right == "以来":
             next_day = now() + relativedelta(days=1)
