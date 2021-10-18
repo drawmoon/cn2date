@@ -71,7 +71,7 @@ class Cn2Date:
 
         if right == "以来":
             next_day = now() + relativedelta(days=1)
-            return [left_date[0], datetime(next_day.year, next_day.month, next_day.day)]
+            return [left_date[0], next_day.date()]
 
         right_date = self.__parse_spoken_lang(right)
         if right_date is None:
