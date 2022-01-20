@@ -1,6 +1,8 @@
 # cn2date
 
-## Simple Usage example
+中文日期 、口语 转换为 日期字符串
+
+## Usage
 
 ```python
 from cn2date import parse
@@ -8,8 +10,12 @@ from cn2date import parse
 result = parse("二零二一年九月十七日")
 ```
 
-## TODO
+## Installation
 
-- [x] 年月日格式
-- [x] 中文口语
-- [ ] 日期组合
+```bash
+pip3 install cn2date
+```
+
+## License
+
+[MIT License](LICENSE)
