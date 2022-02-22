@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+proj_dir = Path(__file__).parent.parent
+
+sys.path.append(str(proj_dir))
+
 from pyinstrument import Profiler
 
 from cn2date.cn2date import Cn2Date
