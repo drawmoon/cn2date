@@ -1,21 +1,23 @@
 import re
-
-from pathlib import Path
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from pathlib import Path
 from typing import List, Tuple, Union
+
+from dateutil.relativedelta import relativedelta
 from lark import Lark
 
-from .visitors import DateTreeVisitor, DateGroup
-from .util import str2digit, build_date, date_format, now
 from .processors import create_processor
+from .util import build_date, date_format, now, str2digit
+from .visitors import DateGroup, DateTreeVisitor
 
 
 class Cn2Date:
     def __init__(self):
         self.__lark_parser = Lark.open(str(Path(__file__).parent / "date.lark"))
 
-    def parse(self, inputs: str) -> Union[Tuple[Union[str, None], Union[str, None]], None]:
+    def parse(
+        self, inputs: str
+    ) -> Union[Tuple[Union[str, None], Union[str, None]], None]:
         if inputs is None or inputs.isspace():
             return None
 
@@ -36,7 +38,9 @@ class Cn2Date:
         else:
             result = self.__parse_date_group(visitor.options)
 
-        return None if result is None else date_format(result[0]), date_format(result[1])
+        return None if result is None else date_format(result[0]), date_format(
+            result[1]
+        )
 
     @staticmethod
     def __parse_spoken_lang(inputs: str) -> Union[List[datetime], None]:
@@ -47,7 +51,8 @@ class Cn2Date:
         # 处理 参数，例如 前n年、后n年...
         args = []
         rq_pattern = re.compile(
-            r"^(?P<prefix>[前后])?(?P<digit>[0-9零一二两三四五六七八九十]+)个?(?:[年月周日天]|星期|季度)(?P<suffix>[以之]?[前后内来])?$")
+            r"^(?P<prefix>[前后])?(?P<digit>[0-9零一二两三四五六七八九十]+)个?(?:[年月周日天]|星期|季度)(?P<suffix>[以之]?[前后内来])?$"
+        )
         result = rq_pattern.search(inputs)
         if result and (result.group("prefix") or result.group("suffix")):
             digit_str = result.group("digit")
@@ -56,10 +61,14 @@ class Cn2Date:
 
         return processor.process(inputs, *tuple(args))
 
-    def __parse_date_group(self, group: DateGroup) -> Union[List[Union[datetime, None]], None]:
+    def __parse_date_group(
+        self, group: DateGroup
+    ) -> Union[List[Union[datetime, None]], None]:
         (left, right) = group
 
-        left_date = build_date(**left) if type(left) == dict else self.__parse_spoken_lang(left)
+        left_date = (
+            build_date(**left) if type(left) == dict else self.__parse_spoken_lang(left)
+        )
         if left_date is None:
             return None
 

@@ -1,8 +1,8 @@
-from lark import Visitor, Tree, Token
 from typing import Dict, Tuple, Union
 
-from cn2date.util import now, str2digit
+from lark import Token, Tree, Visitor
 
+from cn2date.util import now, str2digit
 
 DateGroup = Tuple[Union[Dict[str, int], str], str]
 Date = Union[Dict[str, int], DateGroup, str]

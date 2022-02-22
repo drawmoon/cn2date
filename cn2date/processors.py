@@ -1,12 +1,17 @@
-from typing import Dict, List, Optional, Union
 from datetime import datetime
+from typing import Dict, List, Optional, Union
+
 from dateutil.relativedelta import relativedelta
 
-from cn2date.util import now, build_date
+from cn2date.util import build_date, now
 
 
 class Processor:
-    synonym_dict: Dict[str, List[str]] = {"本": ["当前", "这个"], "内": ["以内", "之内"], "以前": ["之前"]}
+    synonym_dict: Dict[str, List[str]] = {
+        "本": ["当前", "这个"],
+        "内": ["以内", "之内"],
+        "以前": ["之前"],
+    }
 
     def __init__(self, synonym: Optional[Dict[str, List[str]]] = None):
         if synonym is not None:
@@ -172,7 +177,9 @@ class DayProcessor(Processor):
 
     def 后天(self):
         day_after_tomorrow = self._today + relativedelta(days=2)
-        return build_date(day_after_tomorrow.year, day_after_tomorrow.month, day_after_tomorrow.day)
+        return build_date(
+            day_after_tomorrow.year, day_after_tomorrow.month, day_after_tomorrow.day
+        )
 
     def 昨天(self):
         yesterday = self._today - relativedelta(days=1)
@@ -180,7 +187,11 @@ class DayProcessor(Processor):
 
     def 前天(self):
         day_before_yesterday = self._today - relativedelta(days=2)
-        return build_date(day_before_yesterday.year, day_before_yesterday.month, day_before_yesterday.day)
+        return build_date(
+            day_before_yesterday.year,
+            day_before_yesterday.month,
+            day_before_yesterday.day,
+        )
 
     def 上午(self):
         start_date = self._today

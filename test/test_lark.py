@@ -1,10 +1,9 @@
 import itertools
-import pytest
-
 from pathlib import Path
-from lark import Lark, Visitor, Tree, Token
 from typing import Union
 
+import pytest
+from lark import Lark, Token, Tree, Visitor
 
 lark_file = Path(__file__).parent.parent / "cn2date/date.lark"
 lark_parser = Lark.open(str(lark_file))
@@ -119,7 +118,7 @@ test_data_dict = {
         ("二零二一年九月十号", "二零二一", "九", "十", None, None),
         ("二零二一年零九月十号", "二零二一", "零九", "十", None, None),
         ("二一年九月十号", "二一", "九", "十", None, None),
-        ("二一年零九月十号", "二一", "零九", "十", None, None)
+        ("二一年零九月十号", "二一", "零九", "十", None, None),
     ],
     "年月格式": [
         ("2021年09月", "2021", "09", None, None, None),
@@ -129,7 +128,7 @@ test_data_dict = {
         ("二零二一年零九月", "二零二一", "零九", None, None, None),
         ("二零二一年九月", "二零二一", "九", None, None, None),
         ("二一年零九月", "二一", "零九", None, None, None),
-        ("二一年九月", "二一", "九", None, None, None)
+        ("二一年九月", "二一", "九", None, None, None),
     ],
     "月日格式": [
         ("9月10日", None, "9", "10", None, None),
@@ -162,7 +161,7 @@ test_data_dict = {
         ("一月", None, "一", None, None, None),
         ("零一月", None, "零一", None, None, None),
         ("十二月", None, "十二", None, None, None),
-        ("一二月", None, "一二", None, None, None)
+        ("一二月", None, "一二", None, None, None),
     ],
     "日格式": [
         ("31日", None, None, "31", None, None),
@@ -171,7 +170,7 @@ test_data_dict = {
         ("三十一日", None, None, "三十一", None, None),
         ("三一日", None, None, "三一", None, None),
         ("一日", None, None, "一", None, None),
-        ("零一日", None, None, "零一", None, None)
+        ("零一日", None, None, "零一", None, None),
     ],
     "口语格式": [
         ("今年", None, None, None, None, "今年"),
@@ -413,7 +412,7 @@ test_data_dict = {
         ("两个日之内", None, None, None, None, "两日之内"),
         ("2个日之内", None, None, None, None, "2日之内"),
         ("两个日以来", None, None, None, None, "两日以来"),
-        ("2个日以来", None, None, None, None, "2日以来")
+        ("2个日以来", None, None, None, None, "2日以来"),
     ],
     "组合日期格式": [
         ("2019年以前", "2019", None, None, "以前", None),
@@ -430,22 +429,26 @@ test_data_dict = {
         ("5号以来", None, None, "5", "以来", None),
         ("2021年上半年", "2021", None, None, "上半年", None),
         ("2021年第一季度", "2021", None, None, "一季度", None),
-        ("2021年9月7日上午", "2021", "9", "7", "上午", None)
-    ]
+        ("2021年9月7日上午", "2021", "9", "7", "上午", None),
+    ],
 }
 
 test_data = list(itertools.chain.from_iterable(test_data_dict.values()))
 
 
-@pytest.mark.parametrize("input_str,expected_years,expected_months,expected_days,expected_next,expected_spoken_lang",
-                         test_data,
-                         ids=[i[0] for i in test_data])
-def test_lark_parse(input_str: str,
-                    expected_years: str,
-                    expected_months: str,
-                    expected_days: str,
-                    expected_next: str,
-                    expected_spoken_lang: str):
+@pytest.mark.parametrize(
+    "input_str,expected_years,expected_months,expected_days,expected_next,expected_spoken_lang",
+    test_data,
+    ids=[i[0] for i in test_data],
+)
+def test_lark_parse(
+    input_str: str,
+    expected_years: str,
+    expected_months: str,
+    expected_days: str,
+    expected_next: str,
+    expected_spoken_lang: str,
+):
     tree = lark_parser.parse(input_str)
     visitor = DateTreeVisitorForTest()
     visitor.visit(tree)
