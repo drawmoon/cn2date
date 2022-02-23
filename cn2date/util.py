@@ -1,3 +1,5 @@
+import os
+
 from datetime import datetime
 from typing import List, Optional, Union
 
@@ -7,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 
 def now() -> datetime:
     # 方便进行单元测试
-    return datetime(2021, 9, 1)
+    return datetime(2021, 9, 1) if os.getenv("PYTHON_ENVIRONMENT", "") == "Test" else datetime.now()
 
 
 def str2digit(s: str, typ: Optional[str] = None) -> int:
