@@ -1,12 +1,13 @@
+from encodings import utf_8
 from setuptools import find_packages, setup
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 if __name__ == "__main__":
     setup(
         name="cn2date",
-        version="0.0.2",
+        version="0.0.3",
         description="中文日期 、口语 转换为 日期字符串",
         author="drawmoon",
         author_email="1340260725@qq.com",
