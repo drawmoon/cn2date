@@ -1,37 +1,31 @@
 start: date
 
-date: _date
-    | _group
-    | spoken_lang
-
-// 日期组合
-_group: _date next
-    //   | spoken_lang next
-
-// 日期
-_date: years
-     | years? months
-     | years? months days "当天"?
-     | (years? months days | days) ("日" | "号") "当天"?
+date: years
+    | years? months
+    | years? months days "当天"?
+    | (years? months days | days) ("日" | "号") "当天"?
 
 years : DIGIT DIGIT (DIGIT DIGIT)? ("年" | "-" | "/")
 months: DIGIT DIGIT? ("月" | "-" | "/")
 days  : DIGIT (DIGIT DIGIT?)?
-next  : NEXT_WORD | _spoken_lang
 
-// 口语
-spoken_lang  : _spoken_lang
-_spoken_lang : SPOKEN_FRONT "个"? DATE_UNIT
-             | SPOKEN_FRONT _spoken_digit+ "个"? DATE_UNIT
-             | _spoken_digit "个"? DATE_UNIT SPOKEN_REAR?
-_spoken_digit: DIGIT | SPOKEN_DIGIT
+DIGIT: /["0-9零一二三四五六七八九十"]/
 
-SPOKEN_FRONT: "今" | "本" | "当前" | "这个" | "明" | "昨" | "去" | "前" | "后" | "上半" | "下半" | "上" | "下"
-SPOKEN_REAR : NEXT_WORD | "前" | "后" | "内" | "以内" | "之内"
-DATE_UNIT   : "年" | "季度" | "月" | "周" | "星期" | "天" | "日" | "午"
-NEXT_WORD   : "以来" | "以前" | "以后" | "之前" | "之后"
-SPOKEN_DIGIT: "两"
-DIGIT       : /["0-9零一二三四五六七八九十"]/
+===
+
+start: nl
+
+nl       : FRONT "个"? DATE_UNIT
+         | FRONT _nl_digit+ "个"? DATE_UNIT
+         | _nl_digit "个"? DATE_UNIT REAR?
+_nl_digit: DIGIT | NL_DIGIT
+
+FRONT      : "今" | "本" | "当前" | "这个" | "明" | "昨" | "去" | "前" | "后" | "上半" | "下半" | "上" | "下"
+REAR       : NEXT_WORD | "前" | "后" | "内" | "以内" | "之内"
+DATE_UNIT  : "年" | "季度" | "月" | "周" | "星期" | "天" | "日" | "午"
+NEXT_WORD  : "以来" | "以前" | "以后" | "之前" | "之后"
+NL_DIGIT   : "两"
+DIGIT      : /["0-9零一二三四五六七八九十"]/
 
 // 忽略的字符
 %ignore " " | "份" | "度" | "第"
