@@ -1,15 +1,44 @@
 start: date
 
-date: years
-    | years? months
-    | years? months days "当天"?
-    | (years? months days | days) ("日" | "号") "当天"?
+date: years _year_delimiter months _month_delimiter days _day_delimiter?
+    | years _year_delimiter months _month_delimiter?
+    | months _month_delimiter days _day_delimiter?
+    | years _year_delimiter?
+    | months _month_delimiter?
+    | days _day_delimiter?
 
-years : DIGIT DIGIT (DIGIT DIGIT)? ("年" | "-" | "/")
-months: DIGIT DIGIT? ("月" | "-" | "/")
-days  : DIGIT (DIGIT DIGIT?)?
+_year_delimiter : "年" | _delimiter
+_month_delimiter: "月" | _delimiter
+_day_delimiter  : "日" | "号"
+_delimiter      : "-" | "/"
 
-DIGIT: /["0-9零一二三四五六七八九十"]/
+years : _year_2
+      | _year_4
+months: _month_1_9
+      | _month_01_09
+      | _month_10_12
+days  : _day_1_9
+      | _day_01_09
+      | _day_10_29
+      | _day_30_31
+
+_year_4: ONE_NINE ZERO_NINE ZERO_NINE ZERO_NINE
+_year_2: ZERO_NINE ZERO_NINE
+
+_month_10_12: /[1一]/ /[0-2零一二]/
+            | /十/ /[12一二]/?
+_month_01_09: /[0零]/ _month_1_9
+_month_1_9  : ONE_NINE
+
+_day_30_31: /[3三]/ (/[01零一]/ | /十/ /[1一]/?)
+_day_10_29: /[12一二]/ ZERO_NINE
+            | /[2二]/? /十/
+            | /[2二]/? /十/ ONE_NINE
+_day_01_09: /[0零]/ _day_1_9
+_day_1_9  : ONE_NINE
+
+ZERO_NINE: /[0-9零一二三四五六七八九]/
+ONE_NINE: /[1-9一二三四五六七八九]/
 
 ===
 

@@ -1,10 +1,8 @@
 from pathlib import Path
-from typing import Union
+from test.util import get_node_value
 
 import pytest
-from lark import Lark, Tree, Visitor
-
-from cn2date.visitors import scan_value
+from lark import Lark
 
 file = Path(__file__).parent.parent / "cn2date/date.lark"
 file_text = open(file, "r", encoding="utf-8").read()
@@ -141,22 +139,6 @@ date_testdata = [
 ]
 
 
-class DateTreeVisitorForTest(Visitor):
-    def __init__(self):
-        self.years_str: Union[str, None] = None
-        self.months_str: Union[str, None] = None
-        self.days_str: Union[str, None] = None
-
-    def years(self, tree: Tree):
-        self.years_str = scan_value(tree)
-
-    def months(self, tree: Tree):
-        self.months_str = scan_value(tree)
-
-    def days(self, tree: Tree):
-        self.days_str = scan_value(tree)
-
-
 @pytest.mark.parametrize(
     "text,expected_years,expected_months,expected_days",
     date_testdata,
@@ -170,12 +152,11 @@ def test_date_parse(
 ):
     tree = date_parser.parse(text)
 
-    visitor = DateTreeVisitorForTest()
-    visitor.visit(tree)
+    assert tree is not None
 
-    assert visitor.years_str == expected_years
-    assert visitor.months_str == expected_months
-    assert visitor.days_str == expected_days
+    assert get_node_value(tree, "years") == expected_years
+    assert get_node_value(tree, "months") == expected_months
+    assert get_node_value(tree, "days") == expected_days
 
 
 year_testdata = [

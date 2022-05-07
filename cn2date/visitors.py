@@ -3,7 +3,7 @@ from typing import Literal
 from lark import Token, Tree, Visitor
 
 from cn2date.s2e import S2E
-from cn2date.util import DateBuilder, endof, now, to_datepart
+from cn2date.util import DateBuilder, endof, to_datepart
 
 
 class VisitorContext:
@@ -13,33 +13,32 @@ class VisitorContext:
 
 class VisitorBase(Visitor):
     def __init__(self):
-        self.ctx = VisitorContext()
+        self._ctx = VisitorContext()
+
+    def get_node_value(tree: Tree) -> str:
+        children = tree.children
+
+        if not all(isinstance(c, Token) for c in children):
+            raise TypeError("The child of tree is not Token")
+
+        return "".join([c.value for c in children])
 
     def get_context(self) -> VisitorContext:
-        return self.ctx
+        return self._ctx
 
 
 class DateTreeVisitor(VisitorBase):
     def years(self, tree: Tree) -> None:
-        self.ctx.type = "2year"
-        self.ctx.bldr.year(to_datepart(scan_value(tree), "year"))
+        self._ctx.type = "2year"
+        self._ctx.bldr.year(to_datepart(self.get_node_value(tree), "year"))
 
     def months(self, tree: Tree) -> None:
-        self.ctx.type = "2month"
-        self.ctx.bldr.month(to_datepart(scan_value(tree)))
+        self._ctx.type = "2month"
+        self._ctx.bldr.month(to_datepart(self.get_node_value(tree)))
 
     def days(self, tree: Tree) -> None:
-        self.ctx.type = "2day"
-        self.ctx.bldr.day(to_datepart(scan_value(tree)))
-
-
-def scan_value(tree: Tree) -> str:
-    children = tree.children
-
-    if not all(isinstance(c, Token) for c in children):
-        raise TypeError("The child of tree is not Token")
-
-    return "".join([c.value for c in children])
+        self._ctx.type = "2day"
+        self._ctx.bldr.day(to_datepart(self.get_node_value(tree)))
 
 
 def value_from(ctx: VisitorContext) -> S2E:

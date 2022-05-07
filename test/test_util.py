@@ -2,15 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from cn2date.util import (
-    date_add,
-    date_build,
-    date_lens,
-    date_sub,
-    date_trunc,
-    now,
-    to_datepart,
-)
+from cn2date.util import (date_add, date_build, date_lens, date_sub,
+                          date_trunc, now, to_datepart)
 
 
 def test_now():

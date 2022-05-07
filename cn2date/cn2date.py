@@ -16,5 +16,6 @@ class Cn2Date:
             (
                 self.profiler.get_transformer(Intent.Date),
                 self.profiler.get_transformer(Intent.NL),
-            )
+            ),
+            text,
         ).to_tuple()

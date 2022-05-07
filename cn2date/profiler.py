@@ -17,12 +17,14 @@ class Intent(IntEnum):
 
 
 class Profiler:
-    xfmr_dict: Dict[Intent, TransformerBase] = {}
+    __xfmr_dict: Dict[Intent, TransformerBase] = {}
 
     def __init__(self) -> None:
         g_dict = self.__read_conf()
 
-        self.xfmr_dict[Intent.Date] = DateTransformer(Lark(g_dict[Intent.Date]), DateTreeVisitor())
+        self.__xfmr_dict[Intent.Date] = DateTransformer(
+            Lark(g_dict[Intent.Date]), DateTreeVisitor()
+        )
 
     def __read_conf(self) -> Dict[Intent, str]:
         intent_list = [intent for intent in Intent]
@@ -33,12 +35,12 @@ class Profiler:
         return dict(zip(intent_list, text.split("===")))
 
     def get_transformer(self, intent: Intent) -> TransformerBase:
-        return self.xfmr_dict[intent]
+        return self.__xfmr_dict[intent]
 
 
-def preceded(t: Tuple[TransformerBase]) -> S2E:
+def preceded(t: Tuple[TransformerBase], text: str) -> S2E:
     for xfmr in t:
-        source = xfmr.transform()
+        source = xfmr.transform(text)
 
         s2e = last(source)
 
