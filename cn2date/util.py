@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 from typing import Literal, Optional
 
-import cn2an
 from dateutil.relativedelta import relativedelta
 
 
@@ -34,9 +33,7 @@ class DateBuilder:
 
 def startof(
     dt: datetime,
-    fmt: Literal[
-        "y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"
-    ],
+    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
 ) -> datetime:
     if dt is None:
         raise ValueError("The parameter dt is None")
@@ -85,9 +82,7 @@ def startof(
 
 def endof(
     dt: datetime,
-    fmt: Literal[
-        "y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"
-    ],
+    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
 ) -> datetime:
     if dt is None:
         raise ValueError("The parameter dt is None")
@@ -179,7 +174,7 @@ def date_sub(dt: datetime, val: int, fmt: Literal["y", "q", "m", "w", "d"]) -> d
 
 
 def to_datepart(text: str, typ: Optional[str] = None) -> int:
-    datepart = cn2an.transform(text)
+    datepart = simple_transform(text)
 
     if not datepart.isdigit():
         raise TypeError("Conversion failed")
@@ -188,3 +183,17 @@ def to_datepart(text: str, typ: Optional[str] = None) -> int:
         datepart = str(now().year)[0:2] + datepart
 
     return int(datepart)
+
+
+def simple_transform(n: str, cast_chart_ten = False) -> str:
+    _0 = "零"
+    _1 = "一"
+    _10 = "十"
+    t = { "0": _0, "1": _1, "2": "二", "3": "三", "4": "四", "5": "五", "6": "六", "7": "七", "8": "八", "9": "九" }
+    
+    val = n.translate(str.maketrans(t))
+
+    if cast_chart_ten and len(val) == 2 and val[0] != _0:
+        val = f"{val[0]}{_10}" if val[1] == _0 else f"{val[0]}{_10}{val[1]}"
+        return val[1:] if val[0] == _1 else val
+    return val
