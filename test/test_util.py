@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from cn2date.util import (date_add, DateBuilder, endof, date_sub,
-                          startof, now, date_part)
+from cn2date.util import (DateBuilder, date_add, date_part, date_sub, endof,
+                          now, startof)
 
 
 def test_date_builder():

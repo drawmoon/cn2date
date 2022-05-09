@@ -4,7 +4,7 @@ from lark import Lark
 
 from cn2date.profiler import Intent
 from cn2date.source import Source
-from cn2date.visitors import VisitorBase, value_from, visit
+from cn2date.visitors import DateTreeVisitor, VisitorBase, value_from, visit
 
 
 class TransformerBase:
@@ -23,8 +23,8 @@ class TransformerBase:
 
 
 class DateTransformer(TransformerBase):
-    def __init__(self, parser: Lark, visitor: VisitorBase):
-        super(DateTransformer, self).__init__(parser, visitor)
+    def __init__(self, parser: Lark):
+        super(DateTransformer, self).__init__(parser, DateTreeVisitor())
 
     def transform(self, text: str) -> Source:
         ctx = visit(self._visitor, self._parser, text)

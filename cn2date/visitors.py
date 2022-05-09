@@ -3,7 +3,7 @@ from typing import List, Literal, Union
 from lark import Lark, Token, Tree, Visitor
 
 from cn2date.s2e import S2E
-from cn2date.util import DateBuilder, endof, date_part, now
+from cn2date.util import DateBuilder, date_part, endof, now
 
 
 class VisitorContext:
