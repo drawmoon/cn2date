@@ -28,6 +28,7 @@ date_testdata = [
     ("17-7", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
     ("17/7", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
     ("17年7月", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
+    ("一七年七月", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
     ("2017-7", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
     ("2017/7", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
     ("2017年7月", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
@@ -41,11 +42,15 @@ date_testdata = [
     # ("07/11", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))), # 优先识别为 年/月
     ("07月11", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))),
     ("07月11日", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))),
+    ("七月一一日", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))),
+    ("七月十一日", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))),
     # 只包含日的日期格式
     ("7日", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
     ("07日", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
+    ("七日", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
     ("7号", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
     ("07号", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
+    ("七号", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
 ]
 
 

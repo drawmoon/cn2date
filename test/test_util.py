@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from cn2date.util import (DateBuilder, date_add, date_part, date_sub, endof,
-                          now, startof)
+                          startof)
 
 
 def test_date_builder():
