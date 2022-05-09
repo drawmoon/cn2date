@@ -16,7 +16,7 @@ if __name__ == "__main__":
         long_description=long_description,
         long_description_content_type="text/markdown",
         packages=find_packages(),
-        install_requires=["lark-parser", "python-dateutil", "cn2an"],
+        install_requires=["lark-parser", "python-dateutil"],
         include_package_data=True,
         python_requires=">=3.6",
         license="MIT License",
