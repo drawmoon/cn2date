@@ -37,4 +37,4 @@ def preceded(t: Tuple[TransformerBase], text: str) -> S2E:
         if s2e is not None:
             return s2e
 
-    pass
+    raise ValueError(f"Can't parse the text: {text}")
