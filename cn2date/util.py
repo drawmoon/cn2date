@@ -27,9 +27,35 @@ class DateBuilder:
 
 
 def startof(
-        dt: datetime,
-        fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
+    dt: datetime,
+    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
 ) -> datetime:
+    """
+    参数::
+
+        dt:
+
+        fmt:
+            - y: 年
+            - fhoy: 上半年
+            - shoy: 下半年
+            - q: 季度
+            - fq: 第一季度
+            - sq: 第二季度
+            - tq: 第三季度
+            - foq: 第四季度
+            - m: 月
+            - w: 周
+            - d: 天
+            - am: 上午
+            - pm: 下午
+
+    :返回值:
+
+    返回一个 :class:`datetime.datetime` 对象。
+    
+    """
+
     if dt is None:
         raise ValueError("The parameter dt is None")
 
@@ -76,9 +102,36 @@ def startof(
 
 
 def endof(
-        dt: datetime,
-        fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
+    dt: datetime,
+    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
 ) -> datetime:
+    """
+
+    参数::
+
+        dt:
+
+        fmt:
+            - y: 年
+            - fhoy: 上半年
+            - shoy: 下半年
+            - q: 季度
+            - fq: 第一季度
+            - sq: 第二季度
+            - tq: 第三季度
+            - foq: 第四季度
+            - m: 月
+            - w: 周
+            - d: 天
+            - am: 上午
+            - pm: 下午
+        
+    :返回值:
+
+    返回一个 :class:`datetime.datetime` 对象。
+
+    """
+
     if dt is None:
         raise ValueError("The parameter dt is None")
 
@@ -125,6 +178,39 @@ def endof(
 
 
 def date_add(dt: datetime, val: int, fmt: Literal["y", "q", "m", "w", "d"]) -> datetime:
+    """
+    `date_add()` 函数将一个时间/日期区间添加到一个日期中，然后返回该日期。
+
+    参数::
+
+        dt:
+            要修改的日期。
+
+        val:
+            要添加的时间/日期间隔的值。
+
+        fmt:
+            要添加的区间的类型。可以是以下值之一:
+
+            - y: 年
+            - q: 季度
+            - m: 月
+            - w: 周
+            - d: 天
+
+    示例
+
+    >>> from cn2date.util import date_sub
+    >>> dt = datetime(2020, 1, 1)
+    >>> date_add(dt, 1, "y")
+    datetime.datetime(2021, 1, 1)
+
+    :返回值:
+
+    返回一个 :class:`datetime.datetime` 对象。
+    
+    """
+
     if dt is None:
         raise ValueError("The parameter dt is None")
 
@@ -147,6 +233,39 @@ def date_add(dt: datetime, val: int, fmt: Literal["y", "q", "m", "w", "d"]) -> d
 
 
 def date_sub(dt: datetime, val: int, fmt: Literal["y", "q", "m", "w", "d"]) -> datetime:
+    """
+    `date_sub()` 函数从一个日期中减去一个时间/日期区间，然后返回日期。
+
+    参数::
+
+        dt:
+            要修改的日期。
+
+        val:
+            要减去的时间/日期区间的值。
+
+        fmt:
+            要减去的区间的类型。可以是以下值之一:
+
+            - y: 年
+            - q: 季度
+            - m: 月
+            - w: 周
+            - d: 天
+
+    示例
+
+    >>> from cn2date.util import date_sub
+    >>> dt = datetime(2020, 1, 1)
+    >>> date_sub(dt, 1, "y")
+    datetime.datetime(2019, 1, 1)
+
+    :返回值:
+
+    返回一个 :class:`datetime.datetime` 对象。
+
+    """
+
     if dt is None:
         raise ValueError("The parameter dt is None")
 
