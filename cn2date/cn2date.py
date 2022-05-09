@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Tuple
 
-from cn2date.profiler import Intent, Profiler, preceded
+from cn2date.profiler import Profiler, preceded
+from cn2date.source import Intent
 
 
 class Cn2Date:
@@ -15,7 +16,8 @@ class Cn2Date:
         return preceded(
             (
                 self.profiler.get_transformer(Intent.Date),
-                self.profiler.get_transformer(Intent.NL),
+                # self.profiler.get_transformer(Intent.NL),
+                # self.profiler.get_transformer(Intent.Group),
             ),
             text,
         ).to_tuple()

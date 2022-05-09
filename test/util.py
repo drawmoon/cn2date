@@ -6,4 +6,8 @@ def get_node_value(tree, data) -> Union[str, None]:
 
     if len(nodes) == 0:
         return None
-    return "".join([c.value for c in nodes[0].children])
+
+    val = "".join([c.value for c in nodes[0].children])
+    print("output", val)
+
+    return val

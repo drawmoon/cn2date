@@ -2,16 +2,17 @@ from typing import Dict, List, Optional
 
 from lark import Lark
 
+from cn2date.profiler import Intent
 from cn2date.source import Source
-from cn2date.visitors import VisitorBase, value_from
+from cn2date.visitors import VisitorBase, value_from, visit
 
 
 class TransformerBase:
     def __init__(
-        self,
-        parser: Lark,
-        visitor: VisitorBase,
-        synonym: Optional[Dict[str, List[str]]] = None,
+            self,
+            parser: Lark,
+            visitor: VisitorBase,
+            synonym: Optional[Dict[str, List[str]]] = None,
     ):
         self._parser = parser
         self._visitor = visitor
@@ -26,7 +27,8 @@ class DateTransformer(TransformerBase):
         super(DateTransformer, self).__init__(parser, visitor)
 
     def transform(self, text: str) -> Source:
-        t = self._parser.parse(text)
-        self._visitor.visit(t)
+        ctx = visit(self._visitor, self._parser, text)
 
-        s2e = value_from(self._visitor.get_context())
+        s2e = value_from(ctx)
+
+        return Source(Intent.Date, {ctx.mark: s2e}, ctx.ignore)

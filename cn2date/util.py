@@ -6,17 +6,12 @@ from dateutil.relativedelta import relativedelta
 
 
 def now() -> datetime:
-    # 方便进行单元测试
-    return (
-        datetime(2021, 9, 1)
-        if os.getenv("PYTHON_ENVIRONMENT", "") == "Test"
-        else datetime.now()
-    )
+    return datetime.now()
 
 
 class DateBuilder:
     def __init__(self):
-        self.__date = now()
+        self.__date = datetime(now().year, 1, 1)
 
     def year(self, year: int):
         self.__date = self.__date.replace(year=year)
@@ -32,8 +27,8 @@ class DateBuilder:
 
 
 def startof(
-    dt: datetime,
-    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
+        dt: datetime,
+        fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
 ) -> datetime:
     if dt is None:
         raise ValueError("The parameter dt is None")
@@ -81,14 +76,14 @@ def startof(
 
 
 def endof(
-    dt: datetime,
-    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
+        dt: datetime,
+        fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
 ) -> datetime:
     if dt is None:
         raise ValueError("The parameter dt is None")
 
     if fmt == "y":
-        return date_add(dt, 1, "y")
+        return date_add(dt, 1, fmt)
 
     if fmt == "fhoy":
         return datetime(dt.year, 7, 1)
@@ -97,7 +92,7 @@ def endof(
         return date_add(datetime(dt.year, 1, 1), 1, "y")
 
     if fmt == "q":
-        return date_add(dt, 1, "q")
+        return date_add(dt, 1, fmt)
 
     if fmt == "fq":
         return datetime(dt.year, 4, 1)
@@ -173,27 +168,47 @@ def date_sub(dt: datetime, val: int, fmt: Literal["y", "q", "m", "w", "d"]) -> d
     raise ValueError("The parameter fmt is invalid")
 
 
-def to_datepart(text: str, typ: Optional[str] = None) -> int:
-    datepart = simple_transform(text)
+def date_part(text: str, typ: Optional[Literal["y"]] = None) -> int:
+    st = SimpleTransform()
+    part = st.cn2num(text)
 
-    if not datepart.isdigit():
+    if not part.isdigit():
         raise TypeError("Conversion failed")
 
-    if typ == "year" and len(datepart) == 2:
-        datepart = str(now().year)[0:2] + datepart
+    if typ == "y" and len(part) == 2:
+        part = str(now().year)[0:2] + part
 
-    return int(datepart)
+    return int(part)
 
 
-def simple_transform(n: str, cast_chart_ten = False) -> str:
+class SimpleTransform:
     _0 = "零"
     _1 = "一"
     _10 = "十"
-    t = { "0": _0, "1": _1, "2": "二", "3": "三", "4": "四", "5": "五", "6": "六", "7": "七", "8": "八", "9": "九" }
-    
-    val = n.translate(str.maketrans(t))
+    d = {"0": _0, "1": _1, "2": "二", "3": "三", "4": "四", "5": "五", "6": "六", "7": "七", "8": "八", "9": "九"}
 
-    if cast_chart_ten and len(val) == 2 and val[0] != _0:
-        val = f"{val[0]}{_10}" if val[1] == _0 else f"{val[0]}{_10}{val[1]}"
-        return val[1:] if val[0] == _1 else val
-    return val
+    num2cn_tb = str.maketrans(d)
+    cn2num_tb = str.maketrans(dict(zip(list(d.values()), list(d.keys()))))
+
+    def num2cn(self, s: str, cast_chart_ten=False) -> str:
+        val = s.translate(self.num2cn_tb)
+
+        if cast_chart_ten and len(val) == 2 and val[0] != self._0:
+            val = f"{val[0]}{self._10}" if val[1] == self._0 else f"{val[0]}{self._10}{val[1]}"
+            return val[1:] if val[0] == self._1 else val
+
+        return val
+
+    def cn2num(self, s: str):
+        if s == self._10:
+            return "10"
+
+        val = s.translate(self.cn2num_tb)
+
+        if val[0] == self._10:
+            return f"1{val[1:]}"
+
+        if len(val) >= 2 and val[1] == self._10:
+            return f"{val[:-1]}0" if len(val) == 2 else f"{val[0]}{val[2]}"
+
+        return val

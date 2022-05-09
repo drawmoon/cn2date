@@ -95,8 +95,12 @@ date_testdata = [
     ("二一年", "二一", None, None),
     ("二零二一年", "二零二一", None, None),
     # 只包含年月的日期格式
+    ("21-09", "21", "09", None),
+    ("21/09", "21", "09", None),
     ("21年09月", "21", "09", None),
     ("21年9月", "21", "9", None),
+    ("2021-09", "2021", "09", None),
+    ("2021/09", "2021", "09", None),
     ("2021年09月", "2021", "09", None),
     ("2021年9月", "2021", "9", None),
     ("二一年零九月", "二一", "零九", None),
@@ -150,6 +154,7 @@ def test_date_parse(
     expected_months: str,
     expected_days: str,
 ):
+    print("input", text)
     tree = date_parser.parse(text)
 
     assert tree is not None

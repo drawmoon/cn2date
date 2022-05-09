@@ -2,118 +2,115 @@ from datetime import datetime
 
 import pytest
 
-from cn2date.util import (date_add, date_build, date_lens, date_sub,
-                          date_trunc, now, to_datepart)
+from cn2date.util import (date_add, DateBuilder, endof, date_sub,
+                          startof, now, date_part)
 
 
-def test_now():
-    assert now() == datetime(2021, 9, 1)
+def test_date_builder():
+    bdr = DateBuilder()
+    bdr.year(2021)
+    assert bdr.build() == datetime(2021, 1, 1)
+
+    bdr.month(2)
+    assert bdr.build() == datetime(2021, 2, 1)
+
+    bdr.day(15)
+    assert bdr.build() == datetime(2021, 2, 15)
+
+    # with pytest.raises(ValueError):
+    #     dbr.year(None)
 
 
-def test_date_build():
-    y = date_build(2021)
-    assert y == datetime(2021, 1, 1)
-
-    m = date_build(2021, 9)
-    assert m == datetime(2021, 9, 1)
-
-    d = date_build(2021, 9, 15)
-    assert d == datetime(2021, 9, 15)
-
-    with pytest.raises(ValueError):
-        date_build(None)
-
-
-def test_date_trunc():
+def test_startof():
     dt = datetime(2021, 9, 15)
 
-    y = date_trunc(dt, "y")
+    y = startof(dt, "y")
     assert y == datetime(2021, 1, 1)
 
-    fhoy = date_trunc(dt, "fhoy")
+    fhoy = startof(dt, "fhoy")
     assert fhoy == datetime(2021, 1, 1)
 
-    shoy = date_trunc(dt, "shoy")
+    shoy = startof(dt, "shoy")
     assert shoy == datetime(2021, 7, 1)
 
-    q = date_trunc(dt, "q")
+    q = startof(dt, "q")
     assert q == datetime(2021, 7, 1)
 
-    fq = date_trunc(dt, "fq")
+    fq = startof(dt, "fq")
     assert fq == datetime(2021, 1, 1)
 
-    sq = date_trunc(dt, "sq")
+    sq = startof(dt, "sq")
     assert sq == datetime(2021, 4, 1)
 
-    tq = date_trunc(dt, "tq")
+    tq = startof(dt, "tq")
     assert tq == datetime(2021, 7, 1)
 
-    foq = date_trunc(dt, "foq")
+    foq = startof(dt, "foq")
     assert foq == datetime(2021, 10, 1)
 
-    m = date_trunc(dt, "m")
+    m = startof(dt, "m")
     assert m == datetime(2021, 9, 1)
 
-    w = date_trunc(dt, "w")
+    w = startof(dt, "w")
     assert w == datetime(2021, 9, 13)
 
-    d = date_trunc(dt, "d")
+    d = startof(dt, "d")
     assert d == datetime(2021, 9, 15)
 
-    am = date_trunc(dt, "am")
+    am = startof(dt, "am")
     assert am == datetime(2021, 9, 15, 0, 0, 0)
 
-    pm = date_trunc(dt, "pm")
+    pm = startof(dt, "pm")
     assert pm == datetime(2021, 9, 15, 12, 0, 0)
 
     with pytest.raises(ValueError):
-        date_trunc(dt, "x")
+        startof(dt, "x")
 
 
-def test_date_lens():
+def test_endof():
     dt = datetime(2021, 9, 15)
 
-    y = date_lens(dt, "y")
+    y = endof(dt, "y")
     assert y == datetime(2022, 9, 15)
 
-    fhoy = date_lens(dt, "fhoy")
+    fhoy = endof(dt, "fhoy")
     assert fhoy == datetime(2021, 7, 1)
 
-    shoy = date_lens(dt, "shoy")
+    shoy = endof(dt, "shoy")
     assert shoy == datetime(2022, 1, 1)
 
-    q = date_lens(dt, "q")
+    q = endof(dt, "q")
     assert q == datetime(2021, 12, 15)
 
-    fq = date_lens(dt, "fq")
+    fq = endof(dt, "fq")
     assert fq == datetime(2021, 4, 1)
 
-    sq = date_lens(dt, "sq")
+    sq = endof(dt, "sq")
     assert sq == datetime(2021, 7, 1)
 
-    tq = date_lens(dt, "tq")
+    tq = endof(dt, "tq")
     assert tq == datetime(2021, 10, 1)
 
-    foq = date_lens(dt, "foq")
+    foq = endof(dt, "foq")
     assert foq == datetime(2022, 1, 1)
 
-    m = date_lens(dt, "m")
+    m = endof(dt, "m")
     assert m == datetime(2021, 10, 15)
 
-    w = date_lens(dt, "w")
+    w = endof(dt, "w")
     assert w == datetime(2021, 9, 22)
 
-    d = date_lens(dt, "d")
+    d = endof(dt, "d")
     assert d == datetime(2021, 9, 16)
 
-    am = date_lens(dt, "am")
+    am = endof(dt, "am")
     assert am == datetime(2021, 9, 15, 12, 0, 0)
 
-    pm = date_lens(dt, "pm")
+    pm = endof(dt, "pm")
     assert pm == datetime(2021, 9, 15, 19, 0, 0)
 
     with pytest.raises(ValueError):
-        date_lens(dt, "x")
+        endof(dt, "x")
 
 
 def test_date_add():
@@ -161,28 +158,28 @@ def test_date_sub():
 
 
 to_datepart_testdata = [
-    ("year", "07", 2007),
-    ("year", "17", 2017),
-    ("year", "2017", 2017),
-    ("year", "一七", 2017),
-    ("year", "二零一七", 2017),
-    ("month", "1", 1),
-    ("month", "12", 12),
-    ("month", "一", 1),
-    ("month", "十二", 12),
-    ("day", "1", 1),
-    ("day", "31", 31),
-    ("day", "一", 1),
-    ("day", "三十一", 31),
+    ("y", "07", 2007),
+    ("y", "17", 2017),
+    ("y", "2017", 2017),
+    ("y", "一七", 2017),
+    ("y", "二零一七", 2017),
+    ("m", "1", 1),
+    ("m", "12", 12),
+    ("m", "一", 1),
+    ("m", "十二", 12),
+    ("d", "1", 1),
+    ("d", "31", 31),
+    ("d", "一", 1),
+    ("d", "三十一", 31),
 ]
 
 
 @pytest.mark.parametrize(
     "typ,text,expected",
     to_datepart_testdata,
-    ids=[i[0] for i in to_datepart_testdata],
+    ids=[i[1] for i in to_datepart_testdata],
 )
-def test_to_datepart(typ: str, text: str, expected: int):
-    n = to_datepart(text, typ)
+def test_date_part(typ, text: str, expected: int):
+    n = date_part(text, typ)
 
     assert n == expected

@@ -5,11 +5,67 @@ import pytest
 
 from cn2date import parse
 
-year_testdata = [
+now = datetime.now()
+print("now", now)
+
+now_year = now.year
+now_month = now.month
+now_day = now.day
+
+date_testdata = [
+    # 完整的日期格式
+    ("2017-7-23", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
+    ("2017/7/23", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
+    ("2017年7月23日", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
+    ("二零一七年七月二十三", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
+    ("二零一七年七月二十三日", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
+    # 只包含年的日期格式
     ("17年", (datetime(2017, 1, 1), datetime(2018, 1, 1))),
     ("2017年", (datetime(2017, 1, 1), datetime(2018, 1, 1))),
     ("一七年", (datetime(2017, 1, 1), datetime(2018, 1, 1))),
     ("二零一七年", (datetime(2017, 1, 1), datetime(2018, 1, 1))),
+    # 只包含年月的日期格式
+    ("17-7", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
+    ("17/7", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
+    ("17年7月", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
+    ("2017-7", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
+    ("2017/7", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
+    ("2017年7月", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
+    ("二零一七年七月", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
+    # 只包含月的日期格式
+    ("7月", (datetime(now_year, 7, 1), datetime(now_year, 8, 1))),
+    ("07月", (datetime(now_year, 7, 1), datetime(now_year, 8, 1))),
+    ("七月", (datetime(now_year, 7, 1), datetime(now_year, 8, 1))),
+    # 只包含月日的日期格式
+    # ("07-11", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))), # 优先识别为 年-月
+    # ("07/11", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))), # 优先识别为 年/月
+    ("07月11", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))),
+    ("07月11日", (datetime(now_year, 7, 11), datetime(now_year, 7, 12))),
+    # 只包含日的日期格式
+    ("7日", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
+    ("07日", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
+    ("7号", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
+    ("07号", (datetime(now_year, now_month, 7), datetime(now_year, now_month, 8))),
+]
+
+
+@pytest.mark.parametrize(
+    "text,expected", date_testdata, ids=[i[0] for i in date_testdata]
+)
+def test_date_parse(text: str, expected: Tuple[datetime, datetime]):
+    print("input", text)
+
+    result = parse(text)
+
+    print("output", result)
+
+    assert len(result) == len(expected)
+
+    for i, s in enumerate(expected):
+        assert result[i] == s
+
+
+year_testdata = [
     ("今年", (datetime(2021, 1, 1), datetime(2022, 1, 1))),
     ("本年", (datetime(2021, 1, 1), datetime(2022, 1, 1))),
     ("本年份", (datetime(2021, 1, 1), datetime(2022, 1, 1))),
@@ -92,10 +148,6 @@ quarter_testdata = [
 ]
 
 month_testdata = [
-    ("7月", (datetime(2021, 7, 1), datetime(2021, 8, 1))),
-    ("2017年7月", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
-    ("七月", (datetime(2021, 7, 1), datetime(2021, 8, 1))),
-    ("二零一七年七月", (datetime(2017, 7, 1), datetime(2017, 8, 1))),
     ("本月", (datetime(2021, 9, 1), datetime(2021, 10, 1))),
     ("本月份", (datetime(2021, 9, 1), datetime(2021, 10, 1))),
     ("本月度", (datetime(2021, 9, 1), datetime(2021, 10, 1))),
@@ -174,15 +226,6 @@ week_testdata = [
 ]
 
 day_testdata = [
-    ("07-11", (datetime(2021, 7, 11), datetime(2021, 7, 12))),
-    ("07/11", (datetime(2021, 7, 11), datetime(2021, 7, 12))),
-    ("2017-7-23", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
-    ("2017/7/23", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
-    ("07月11", (datetime(2021, 7, 11), datetime(2021, 7, 12))),
-    ("07月11日", (datetime(2021, 7, 11), datetime(2021, 7, 12))),
-    ("2017年7月23日", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
-    ("二零一七年七月二十三", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
-    ("二零一七年七月二十三日", (datetime(2017, 7, 23), datetime(2017, 7, 24))),
     ("上午", (datetime(2021, 9, 1), datetime(2021, 9, 1, 12))),
     ("下午", (datetime(2021, 9, 1, 12), datetime(2021, 9, 1, 19))),
     ("今日", (datetime(2021, 9, 1), datetime(2021, 9, 2))),
@@ -351,13 +394,3 @@ parse_testdata = [
     *day_testdata,
     # *groupdate_testdata, # TODO: 待完善组合日期的逻辑
 ]
-
-
-@pytest.mark.parametrize(
-    "text,expected", parse_testdata, ids=[i[0] for i in parse_testdata]
-)
-def test_parse(text: str, expected: Tuple[datetime, datetime]):
-    result = parse(text)
-    assert len(result) == len(expected)
-    for i, s in enumerate(expected):
-        assert result[i] == s
