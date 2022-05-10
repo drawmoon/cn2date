@@ -1,4 +1,5 @@
 from encodings import utf_8
+
 from setuptools import find_packages, setup
 
 with open("README.md", "r", encoding="utf-8") as fh:
@@ -15,9 +16,9 @@ if __name__ == "__main__":
         long_description=long_description,
         long_description_content_type="text/markdown",
         packages=find_packages(),
-        install_requires=["lark-parser", "python-dateutil", "cn2an"],
+        install_requires=["lark-parser", "python-dateutil"],
         include_package_data=True,
-        python_requires=">=3.6",
+        python_requires=">=3.8",
         license="MIT License",
         classifiers=[
             "Programming Language :: Python :: 3.9",
