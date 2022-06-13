@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List, Tuple
 
 from cn2date.s2e import S2E
 from cn2date.source import last
@@ -6,12 +7,9 @@ from cn2date.transform import ITransformer
 
 
 class Cn2Date:
-    __exts: list[ITransformer] = []
+    __exts: List[ITransformer] = []
 
-    # def __init__(self) -> None:
-    #     self.profiler = Profiler()
-
-    def get_ext(self) -> tuple[ITransformer]:
+    def get_ext(self) -> Tuple[ITransformer]:
         return tuple(self.__exts)
 
     def add_ext(self, ext: ITransformer):
@@ -24,7 +22,7 @@ class Cn2Date:
 
         return self
 
-    def parse(self, text: str) -> tuple[datetime, datetime]:
+    def parse(self, text: str) -> Tuple[datetime, datetime]:
         if text is None or text.isspace():
             raise ValueError("The parameter text is None or empty")
 
@@ -32,15 +30,6 @@ class Cn2Date:
             raise ValueError("No extension is added")
 
         return self.__preceded(text).to_tuple()
-
-        # return preceded(
-        #     (
-        #         self.profiler.get_transformer(Intent.Date),
-        #         # self.profiler.get_transformer(Intent.NL),
-        #         # self.profiler.get_transformer(Intent.Group),
-        #     ),
-        #     text,
-        # ).to_tuple()
 
     def __preceded(self, text: str) -> S2E:
         for ext in self.__exts:

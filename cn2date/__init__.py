@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 from lark import Lark
 
@@ -9,7 +10,7 @@ from .cn2date import Cn2Date
 __version__ = "0.0.4"
 
 
-def read_default_conf() -> list[str]:
+def read_default_conf() -> List[str]:
     file = Path(__file__).parent / "date.lark"
     text = open(file, "r", encoding="utf-8").read()
     return text.split("===")
