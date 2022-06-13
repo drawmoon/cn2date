@@ -2,12 +2,11 @@ from typing import Dict, List, Optional
 
 from lark import Lark
 
-from cn2date.profiler import Intent
-from cn2date.source import Source
+from cn2date.source import Source, Intent
 from cn2date.visitors import DateTreeVisitor, VisitorBase, value_from, visit
 
 
-class TransformerBase:
+class ITransformer:
     def __init__(
             self,
             parser: Lark,
@@ -22,7 +21,7 @@ class TransformerBase:
         pass
 
 
-class DateTransformer(TransformerBase):
+class DateTransformer(ITransformer):
     def __init__(self, parser: Lark):
         super(DateTransformer, self).__init__(parser, DateTreeVisitor())
 
