@@ -8,10 +8,12 @@ class Intent(IntEnum):
     Date = 1
     NL = 2
     Group = 3
-    
+
 
 class Source:
-    def __init__(self, intent: Intent, terminative: Dict[str, S2E], next: List[str]) -> None:
+    def __init__(
+        self, intent: Intent, terminative: Dict[str, S2E], next: List[str]
+    ) -> None:
         self.intent = intent
         self.terminative = terminative
         self.next = next

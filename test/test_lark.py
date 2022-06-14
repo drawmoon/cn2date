@@ -23,12 +23,23 @@ def __test(g: str, matched, unmatched):
             l.parse(i)
 
 
-def __simple_transform(n: str, cast_chart_ten = False) -> str:
+def __simple_transform(n: str, cast_chart_ten=False) -> str:
     _0 = "零"
     _1 = "一"
     _10 = "十"
-    t = { "0": _0, "1": _1, "2": "二", "3": "三", "4": "四", "5": "五", "6": "六", "7": "七", "8": "八", "9": "九" }
-    
+    t = {
+        "0": _0,
+        "1": _1,
+        "2": "二",
+        "3": "三",
+        "4": "四",
+        "5": "五",
+        "6": "六",
+        "7": "七",
+        "8": "八",
+        "9": "九",
+    }
+
     val = n.translate(str.maketrans(t))
 
     if cast_chart_ten and len(val) == 2 and val[0] != _0:
@@ -67,7 +78,9 @@ def test_month_lark():
     _01_09 = [f"0{i}" for i in _1_9]
     _10_12 = [str(i) for i in list(range(10, 13))]
     _01_09_1_12 = _1_9 + _10_12 + _01_09
-    _01_09_1_12_cn = [__simple_transform(i) for i in _01_09_1_12] + [__simple_transform(i, True) for i in _10_12]
+    _01_09_1_12_cn = [__simple_transform(i) for i in _01_09_1_12] + [
+        __simple_transform(i, True) for i in _10_12
+    ]
 
     matched = _01_09_1_12 + _01_09_1_12_cn + ["一2", "十2"]
     unmatched = ["0", "13", "111", "零", "一三", "十三", "十十", "一十", "一十一", "一一一"]
@@ -96,10 +109,26 @@ def test_day_lark():
     _01_09 = [f"0{i}" for i in _1_9]
     _10_31 = [str(i) for i in list(range(10, 32))]
     _01_09_1_31 = _1_9 + _10_31 + _01_09
-    _01_09_1_31_cn = [__simple_transform(i) for i in _01_09_1_31] + [__simple_transform(i, True) for i in _10_31]
+    _01_09_1_31_cn = [__simple_transform(i) for i in _01_09_1_31] + [
+        __simple_transform(i, True) for i in _10_31
+    ]
 
     matched = _01_09_1_31 + _01_09_1_31_cn + ["一3", "十3", "3十1"]
-    unmatched = ["0", "32", "011", "111", "零", "三二", "三十二", "零十", "十零", "十十", "一十", "一十一", "一一一"]
+    unmatched = [
+        "0",
+        "32",
+        "011",
+        "111",
+        "零",
+        "三二",
+        "三十二",
+        "零十",
+        "十零",
+        "十十",
+        "一十",
+        "一十一",
+        "一一一",
+    ]
 
     g = """
         start: date
@@ -121,7 +150,7 @@ def test_day_lark():
     """
 
     __test(g, matched, unmatched)
-    
+
 
 file = Path(__file__).parent.parent / "cn2date/date.lark"
 file_text = open(file, "r", encoding="utf-8").read()

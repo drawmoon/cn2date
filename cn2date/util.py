@@ -27,7 +27,9 @@ class DateBuilder:
 
 def startof(
     dt: datetime,
-    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
+    fmt: Literal[
+        "y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"
+    ],
 ) -> datetime:
     """
     参数::
@@ -52,7 +54,7 @@ def startof(
     :返回值:
 
     返回一个 :class:`datetime.datetime` 对象。
-    
+
     """
 
     if dt is None:
@@ -102,7 +104,9 @@ def startof(
 
 def endof(
     dt: datetime,
-    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
+    fmt: Literal[
+        "y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"
+    ],
 ) -> datetime:
     """
 
@@ -124,7 +128,7 @@ def endof(
             - d: 天
             - am: 上午
             - pm: 下午
-        
+
     :返回值:
 
     返回一个 :class:`datetime.datetime` 对象。
@@ -207,7 +211,7 @@ def date_add(dt: datetime, val: int, fmt: Literal["y", "q", "m", "w", "d"]) -> d
     :返回值:
 
     返回一个 :class:`datetime.datetime` 对象。
-    
+
     """
 
     if dt is None:
@@ -303,7 +307,18 @@ class SimpleTransform:
     _0 = "零"
     _1 = "一"
     _10 = "十"
-    d = {"0": _0, "1": _1, "2": "二", "3": "三", "4": "四", "5": "五", "6": "六", "7": "七", "8": "八", "9": "九"}
+    d = {
+        "0": _0,
+        "1": _1,
+        "2": "二",
+        "3": "三",
+        "4": "四",
+        "5": "五",
+        "6": "六",
+        "7": "七",
+        "8": "八",
+        "9": "九",
+    }
 
     num2cn_tb = str.maketrans(d)
     cn2num_tb = str.maketrans(dict(zip(list(d.values()), list(d.keys()))))
@@ -312,7 +327,11 @@ class SimpleTransform:
         val = s.translate(self.num2cn_tb)
 
         if cast_chart_ten and len(val) == 2 and val[0] != self._0:
-            val = f"{val[0]}{self._10}" if val[1] == self._0 else f"{val[0]}{self._10}{val[1]}"
+            val = (
+                f"{val[0]}{self._10}"
+                if val[1] == self._0
+                else f"{val[0]}{self._10}{val[1]}"
+            )
             return val[1:] if val[0] == self._1 else val
 
         return val

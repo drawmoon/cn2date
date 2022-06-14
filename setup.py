@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 if __name__ == "__main__":
     setup(
         name="cn2date",
-        version="0.0.4",
+        version="0.0.5-beta1",
         description="中文日期 、口语 转换为 日期字符串",
         author="drawmoon",
         author_email="1340260725@qq.com",

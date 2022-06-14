@@ -1,13 +1,11 @@
 from pathlib import Path
 from typing import List
 
-from lark import Lark
-
 from cn2date.transform import DateTransformer
 
 from .cn2date import Cn2Date
 
-__version__ = "0.0.4"
+__version__ = "0.0.5-beta1"
 
 
 def read_default_conf() -> List[str]:
@@ -18,7 +16,7 @@ def read_default_conf() -> List[str]:
 
 def create_default_parser() -> Cn2Date:
     confs = read_default_conf()
-    return Cn2Date().add_ext(DateTransformer(Lark(confs[0])))
+    return Cn2Date().add_ext(DateTransformer(confs[0]))
 
 
 default = create_default_parser()
