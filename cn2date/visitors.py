@@ -1,59 +1,58 @@
-from typing import List
+from __future__ import annotations
 
 from lark import Token, Tree, Visitor
-from typing_extensions import Self
 
+from cn2date.transform_info import TransformInfo
 from cn2date.util import DateBuilder, date_part, now
 
 
-class VisitorContext:
-    def __init__(self) -> None:
-        self.depth: str = "y"
-        self.bldr = DateBuilder()
-        self.mark = ""
-        self.ignore: List[str] = []
-
-
 class VisitorBase(Visitor):
-    ctx: VisitorContext
+    def __init__(self) -> None:
+        self.transform_info: TransformInfo | None = None
 
-    def initialize(self) -> Self:
-        self.ctx = VisitorContext()
+    def initialize(self, transform_info: TransformInfo) -> VisitorBase:
+        self.transform_info = transform_info
         return self
 
-    def _get_node_value(self, node: Tree) -> str:
+    def _take(self, node: Tree) -> None:
         if node is None:
             raise ValueError("The current node is None")
 
-        children = node.children
+        self.transform_info.current = ""
 
-        if not all(isinstance(c, Token) for c in children):
-            raise TypeError("The child of tree is not Token")
-
-        return "".join([c.value for c in children])
+        for child in node.children:
+            if not isinstance(child, Token):
+                raise TypeError("The child of tree is not Token")
+            self.transform_info.current += child
 
 
 class DateTreeVisitor(VisitorBase):
-    def years(self, tree: Tree) -> None:
-        val = self._get_node_value(tree)
-        year_part = date_part(val, "y")
+    builder: DateBuilder
+    depth: int
 
-        self.ctx.bldr.year(year_part)
-        self.ctx.depth = "y"
+    def initialize(self, transform_info: TransformInfo) -> DateTreeVisitor:
+        super(DateTreeVisitor, self).initialize(transform_info)
+        self.builder = DateBuilder()
+        self.depth = 0
+        return self
+
+    def years(self, tree: Tree) -> None:
+        self._take(tree)
+        year = date_part(self.transform_info.current, "y")
+        self.builder.year(year)
+        self.depth = 0
 
     def months(self, tree: Tree) -> None:
-        val = self._get_node_value(tree)
-        month_part = date_part(val)
-
-        self.ctx.bldr.month(month_part)
-        self.ctx.depth = "y.m"
+        self._take(tree)
+        month = date_part(self.transform_info.current)
+        self.builder.month(month)
+        self.depth = 1
 
     def days(self, tree: Tree) -> None:
-        if self.ctx.depth != "y.m":
-            self.ctx.bldr.month(now().month)
+        if self.depth < 1:
+            self.builder.month(now().month)
 
-        val = self._get_node_value(tree)
-        day_part = date_part(val)
-
-        self.ctx.bldr.day(day_part)
-        self.ctx.depth = "y.m.d"
+        self._take(tree)
+        day = date_part(self.transform_info.current)
+        self.builder.day(day)
+        self.depth = 2

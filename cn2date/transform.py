@@ -1,60 +1,46 @@
-from typing import Dict, List, Optional
+from __future__ import annotations
+
+from typing import Optional
 
 from lark import Lark
-from typing_extensions import Self
 
-from cn2date.s2e import S2E
-from cn2date.source import Intent, Source
+from cn2date.config import get_default_conf
+from cn2date.transform_info import TransformInfo
 from cn2date.util import endof
 from cn2date.visitors import DateTreeVisitor
 
 
-class TransformerContext:
-    def __init__(
-        self,
-        expr: str,
-        synonym: Optional[Dict[str, List[str]]] = None,
-    ) -> None:
-        self.expr = expr
+class TransformerBase:
+    transform_info: TransformInfo
+
+    def __init__(self, synonym: Optional[dict[str, list[str]]] = None):
         self.synonym = synonym
-        self.current_val: str = None
-        self.res = None
-        self.exception = None
 
-
-class ITransformer:
-    def __init__(
-        self, expr: str, synonym: Optional[Dict[str, List[str]]] = None
-    ) -> None:
-        self.ctx = TransformerContext(expr, synonym)
-
-    def initialize(self, text: str) -> Self:
-        self.ctx.current_val = text
-        self.ctx.res = None
-        self.ctx.exception = None
+    def initialize(self, transform_info: TransformInfo) -> TransformerBase:
+        self.transform_info = transform_info
+        self.transform_info.synonym = self.synonym
         return self
 
-    def transform(self) -> Source:
-        pass
+    def transform(self) -> bool:
+        return False
 
 
-class DateTransformer(ITransformer):
-    def transform(self) -> Source:
-        parser = Lark(self.ctx.expr)
-        tree = parser.parse(self.ctx.current_val)
+class DateTransformer(TransformerBase):
+    def transform(self) -> bool:
+        parser = Lark(get_default_conf()[0])
+        tree = parser.parse(self.transform_info.base_str)
 
-        visitor = DateTreeVisitor().initialize()
+        visitor = DateTreeVisitor().initialize(self.transform_info)
         visitor.visit(tree)
-        visitor_ctx = visitor.ctx
 
-        start = visitor_ctx.bldr.build()
-        end = endof(
-            start,
-            "y"
-            if visitor_ctx.depth == "y"
-            else "m"
-            if visitor_ctx.depth == "y.m"
-            else "d",
-        )
-        s2e = S2E(start, end)
-        return Source(Intent.Date, {visitor_ctx.mark: s2e}, visitor_ctx.ignore)
+        start = visitor.builder.build()
+        if visitor.depth == 0:
+            self.transform_info.write(start, endof(start, "y"))
+        elif visitor.depth == 1:
+            self.transform_info.write(start, endof(start, "m"))
+        else:
+            self.transform_info.write(start, endof(start, "d"))
+
+        self.transform_info.intent = "date"
+
+        return True

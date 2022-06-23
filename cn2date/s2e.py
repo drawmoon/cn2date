@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from datetime import datetime
-from typing import Tuple
 
 
 class S2E:
@@ -7,5 +8,5 @@ class S2E:
         self.start = start
         self.end = end
 
-    def to_tuple(self) -> Tuple[datetime, datetime]:
+    def to_tuple(self) -> tuple[datetime, datetime]:
         return self.start, self.end

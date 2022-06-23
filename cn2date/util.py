@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Optional
 
 from dateutil.relativedelta import relativedelta
+from typing_extensions import Literal
 
 
 def now() -> datetime:
@@ -129,6 +130,7 @@ def endof(
             - am: 上午
             - pm: 下午
 
+    :rtype: object
     :返回值:
 
     返回一个 :class:`datetime.datetime` 对象。
