@@ -4,3 +4,6 @@ pythonVersion = "3.9"
 
 [tool.isort]
 profile = "black"
+
+[tool.black]
+line-length = 120

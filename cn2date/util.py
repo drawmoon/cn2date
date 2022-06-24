@@ -30,9 +30,7 @@ class DateBuilder:
 
 def startof(
     dt: datetime,
-    fmt: Literal[
-        "y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"
-    ],
+    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
 ) -> datetime:
     """
     参数::
@@ -107,9 +105,7 @@ def startof(
 
 def endof(
     dt: datetime,
-    fmt: Literal[
-        "y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"
-    ],
+    fmt: Literal["y", "fhoy", "shoy", "q", "fq", "sq", "tq", "foq", "m", "w", "d", "am", "pm"],
 ) -> datetime:
     """
 
@@ -331,11 +327,7 @@ class SimpleTransform:
         val = s.translate(self.num2cn_tb)
 
         if cast_chart_ten and len(val) == 2 and val[0] != self._0:
-            val = (
-                f"{val[0]}{self._10}"
-                if val[1] == self._0
-                else f"{val[0]}{self._10}{val[1]}"
-            )
+            val = f"{val[0]}{self._10}" if val[1] == self._0 else f"{val[0]}{self._10}{val[1]}"
             return val[1:] if val[0] == self._1 else val
 
         return val

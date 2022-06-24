@@ -78,9 +78,7 @@ def test_month_lark():
     _01_09 = [f"0{i}" for i in _1_9]
     _10_12 = [str(i) for i in list(range(10, 13))]
     _01_09_1_12 = _1_9 + _10_12 + _01_09
-    _01_09_1_12_cn = [__simple_transform(i) for i in _01_09_1_12] + [
-        __simple_transform(i, True) for i in _10_12
-    ]
+    _01_09_1_12_cn = [__simple_transform(i) for i in _01_09_1_12] + [__simple_transform(i, True) for i in _10_12]
 
     matched = _01_09_1_12 + _01_09_1_12_cn + ["一2", "十2"]
     unmatched = ["0", "13", "111", "零", "一三", "十三", "十十", "一十", "一十一", "一一一"]
@@ -109,9 +107,7 @@ def test_day_lark():
     _01_09 = [f"0{i}" for i in _1_9]
     _10_31 = [str(i) for i in list(range(10, 32))]
     _01_09_1_31 = _1_9 + _10_31 + _01_09
-    _01_09_1_31_cn = [__simple_transform(i) for i in _01_09_1_31] + [
-        __simple_transform(i, True) for i in _10_31
-    ]
+    _01_09_1_31_cn = [__simple_transform(i) for i in _01_09_1_31] + [__simple_transform(i, True) for i in _10_31]
 
     matched = _01_09_1_31 + _01_09_1_31_cn + ["一3", "十3", "3十1"]
     unmatched = [

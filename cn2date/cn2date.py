@@ -41,6 +41,4 @@ class Cn2Date:
                     raise ValueError(f"Can't parse the text: {transform_info.base_str}")
                 return transform_info.result
 
-        raise ValueError(
-            f"No extension could handle the text: {transform_info.base_str}"
-        )
+        raise ValueError(f"No extension could handle the text: {transform_info.base_str}")

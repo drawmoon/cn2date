@@ -54,9 +54,7 @@ date_testdata = [
 ]
 
 
-@pytest.mark.parametrize(
-    "text,expected", date_testdata, ids=[i[0] for i in date_testdata]
-)
+@pytest.mark.parametrize("text,expected", date_testdata, ids=[i[0] for i in date_testdata])
 def test_date_parse(text: str, expected: Tuple[datetime, datetime]):
     print("input", text)
 
