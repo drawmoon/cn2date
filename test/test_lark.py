@@ -556,6 +556,24 @@ nl_testdata = [
     ("2个日以来", "2日以来"),
 ]
 
+
+@pytest.mark.parametrize(
+    "text,expected",
+    nl_testdata,
+    ids=[i[0] for i in nl_testdata],
+)
+def test_nl_parse(
+    text: str,
+    expected: str,
+):
+    print("input", text)
+    tree = nl_parser.parse(text)
+
+    assert tree is not None
+
+    assert get_node_value(tree, "nl") == expected
+
+
 group_testdata = [
     ("2019年以前", "2019", None, None, "以前", None),
     ("2019年之前", "2019", None, None, "之前", None),

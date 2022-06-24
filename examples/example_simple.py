@@ -7,7 +7,7 @@ sys.path.append(str(proj_dir))
 
 from cn2date import parse
 
-words = ["2021年", "二零二一年九月十七日"]
+words = ["2021年", "二零二一年九月十七日", "今年"]
 
 for word in words:
     print(parse(word))

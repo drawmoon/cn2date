@@ -10,14 +10,16 @@ from cn2date.s2e import S2E
 
 
 class TransformInfo:
-    base_str: str
+    input: str
+    original_input: str
     synonym: dict[str, list[str]] | None
     current: str | None
     result: S2E | None
     intent: Literal["date", "nl", "group"] | str | None
 
-    def initialize(self, base_str: str) -> TransformInfo:
-        self.base_str = base_str
+    def initialize(self, text: str) -> TransformInfo:
+        self.input = text
+        self.original_input = text
         self.synonym = None
         self.current = None
         self.result = None

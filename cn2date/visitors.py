@@ -58,3 +58,8 @@ class DateTreeVisitor(VisitorBase):
         day = date_part(self.transform_info.current)
         self.builder.day(day)
         self.depth = 2
+
+
+class NLTreeVisitor(VisitorBase):
+    def nl(self, tree: Tree) -> None:
+        self._take(tree)
