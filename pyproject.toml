@@ -1,0 +1,6 @@
+[tool.pyright]
+include = ["cn2date", "test"]
+pythonVersion = "3.9"
+
+[tool.isort]
+profile = "black"

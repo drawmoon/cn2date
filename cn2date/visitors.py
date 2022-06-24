@@ -1,3 +1,5 @@
+# pyright: strict
+
 from __future__ import annotations
 
 from lark import Token, Tree, Visitor

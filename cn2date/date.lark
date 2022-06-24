@@ -1,4 +1,4 @@
-start: date 
+start: date
 
 date: years _year_delimiter months _month_delimiter days _day_delimiter?
     | years _year_delimiter months _month_delimiter?
