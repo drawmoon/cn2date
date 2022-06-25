@@ -19,9 +19,14 @@ class TransformerBase:
     transform_info: TransformInfo
 
     def __init__(self, synonym: Optional[dict[str, list[str]]] = None):
+        """
+
+        :param synonym: 代名词
+        """
         self.synonym = synonym
 
     def initialize(self, transform_info: TransformInfo) -> TransformerBase:
+        """ """
         self.transform_info = transform_info
         self._handle_synonym()
         return self
@@ -39,14 +44,29 @@ class TransformerBase:
         self.transform_info.synonym = self.synonym
 
     def transform(self) -> bool:
+        """ """
         return False
 
 
-class DateTransformer(TransformerBase):
+class LarkTransformer(TransformerBase):
+    """ """
+
+    def _parse(self, grammar: str) -> Tree | None:
+        """ """
+        try:
+            parser = Lark(grammar)
+            return parser.parse(self.transform_info.input)
+        except UnexpectedCharacters:  # 传入的字符串匹配 lark 失败
+            return None
+
+
+class DateTransformer(LarkTransformer):
     """ """
 
     def transform(self) -> bool:
-        tree = self.__parse()
+        """ """
+
+        tree = self._parse(get_default_conf()[0])
         if tree is None:
             return False
 
@@ -65,29 +85,25 @@ class DateTransformer(TransformerBase):
 
         return True
 
-    def __parse(self) -> Tree | None:
-        try:
-            parser = Lark(get_default_conf()[0])
-            return parser.parse(self.transform_info.input)
-        except UnexpectedCharacters:  # 传入的字符串匹配 lark 失败
-            return None
 
-
-class NLTransformer(TransformerBase):
+class NLTransformer(LarkTransformer):
     """ """
 
     __selectors: dict[str, Callable[[TransformInfo], bool]] = {}
 
     def initialize(self, transform_info: TransformInfo) -> NLTransformer:
+        """ """
         super(NLTransformer, self).initialize(transform_info)
         if not any(self.__selectors):
             self.__add_default_selector()
         return self
 
     def get_selectors(self) -> list[str]:
+        """ """
         return list(self.__selectors.keys())
 
     def add_selector(self, name: str, selector: Callable[[TransformInfo], bool]) -> NLTransformer:
+        """ """
         if name in self.__selectors:
             raise ValueError(f"Selectors with the same key already exist: {name}")
 
@@ -96,15 +112,18 @@ class NLTransformer(TransformerBase):
         return self
 
     def remove_selector(self, name: str) -> NLTransformer:
+        """ """
         if name in self.__selectors:
             self.__selectors.pop(name)
         return self
 
     def __add_default_selector(self) -> None:
+        """ """
         self.__selectors = {**YearSelector().items}
 
     def transform(self) -> bool:
-        tree = self.__parse()
+        """ """
+        tree = self._parse(get_default_conf()[1])
 
         visitor = NLTreeVisitor().initialize(self.transform_info)
         visitor.visit(tree)
@@ -118,10 +137,3 @@ class NLTransformer(TransformerBase):
                     return True
 
         return False
-
-    def __parse(self) -> Tree | None:
-        try:
-            parser = Lark(get_default_conf()[1])
-            return parser.parse(self.transform_info.input)
-        except UnexpectedCharacters:  # 传入的字符串匹配 lark 失败
-            return None

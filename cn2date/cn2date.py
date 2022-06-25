@@ -9,22 +9,28 @@ from cn2date.transform import TransformerBase, TransformInfo
 
 
 class Cn2Date:
+    """ """
+
     __extensions: list[TransformerBase] = []
 
     def get_extensions(self) -> tuple[TransformerBase]:
+        """ """
         return tuple(self.__extensions)
 
     def add_extensions(self, *extensions: TransformerBase) -> Cn2Date:
+        """ """
         for extension in extensions:
             self.__extensions.append(extension)
         return self
 
     def remove_extensions(self, *extensions: TransformerBase) -> Cn2Date:
+        """ """
         for extension in extensions:
             self.__extensions.remove(extension)
         return self
 
     def parse(self, text: str) -> tuple[datetime, datetime]:
+        """ """
         if text is None or text.isspace():
             raise ValueError("The parameter text is None or empty")
 
@@ -35,6 +41,7 @@ class Cn2Date:
         return self.__preceded(transform_info).to_tuple()
 
     def __preceded(self, transform_info: TransformInfo) -> S2E:
+        """ """
         for ext in self.__extensions:
             if ext.initialize(transform_info).transform():
                 if transform_info.result is None:

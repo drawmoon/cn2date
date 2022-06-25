@@ -1,4 +1,6 @@
 class SelectorMethod:
+    """ """
+
     tag: str = None
 
     def __init__(self, tag: str):
