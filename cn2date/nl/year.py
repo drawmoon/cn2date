@@ -6,11 +6,12 @@ from cn2date.transform_info import TransformInfo
 from cn2date.util import date_add, date_sub, endof, now, startof
 
 
-class YearSelector(SelectorBase):
+class _YearSelector(SelectorBase):
     """ """
 
+    @staticmethod
     @SelectorMethod("今年")
-    def _s_1(self, transform_info: TransformInfo) -> bool:
+    def _s_1(transform_info: TransformInfo) -> bool:
         """
         今年
 
@@ -22,8 +23,9 @@ class YearSelector(SelectorBase):
         transform_info.write(s, e)
         return True
 
+    @staticmethod
     @SelectorMethod("明年")
-    def _s_2(self, transform_info: TransformInfo) -> bool:
+    def _s_2(transform_info: TransformInfo) -> bool:
         """
         明年
 
@@ -35,8 +37,9 @@ class YearSelector(SelectorBase):
         transform_info.write(s, e)
         return True
 
+    @staticmethod
     @SelectorMethod("去年")
-    def _s_3(self, transform_info: TransformInfo) -> bool:
+    def _s_3(transform_info: TransformInfo) -> bool:
         """
         去年
 
@@ -48,8 +51,9 @@ class YearSelector(SelectorBase):
         transform_info.write(s, e)
         return True
 
+    @staticmethod
     @SelectorMethod("前年")
-    def _s_4(self, transform_info: TransformInfo) -> bool:
+    def _s_4(transform_info: TransformInfo) -> bool:
         """
         前年
 
@@ -61,8 +65,9 @@ class YearSelector(SelectorBase):
         transform_info.write(s, e)
         return True
 
+    @staticmethod
     @SelectorMethod("上半年")
-    def _s_5(self, transform_info: TransformInfo) -> bool:
+    def _s_5(transform_info: TransformInfo) -> bool:
         """
         上半年
 
@@ -74,8 +79,9 @@ class YearSelector(SelectorBase):
         transform_info.write(s, e)
         return True
 
+    @staticmethod
     @SelectorMethod("下半年")
-    def _s_6(self, transform_info: TransformInfo) -> bool:
+    def _s_6(transform_info: TransformInfo) -> bool:
         """
         下半年
 
@@ -87,8 +93,9 @@ class YearSelector(SelectorBase):
         transform_info.write(s, e)
         return True
 
+    @staticmethod
     @SelectorMethod("前几年")
-    def _s_7(self, transform_info: TransformInfo) -> bool:
+    def _s_7(transform_info: TransformInfo) -> bool:
         """
         前几年
 
@@ -100,8 +107,9 @@ class YearSelector(SelectorBase):
         """
         pass
 
+    @staticmethod
     @SelectorMethod("后几年")
-    def _s_8(self, transform_info: TransformInfo) -> bool:
+    def _s_8(transform_info: TransformInfo) -> bool:
         """
         后几年
 
@@ -113,8 +121,9 @@ class YearSelector(SelectorBase):
         """
         pass
 
+    @staticmethod
     @SelectorMethod("几年前")
-    def _s_9(self, transform_info: TransformInfo) -> bool:
+    def _s_9(transform_info: TransformInfo) -> bool:
         """
         几年前
 
@@ -126,8 +135,9 @@ class YearSelector(SelectorBase):
         """
         pass
 
+    @staticmethod
     @SelectorMethod("几年后")
-    def _s_10(self, transform_info: TransformInfo) -> bool:
+    def _s_10(transform_info: TransformInfo) -> bool:
         """
         几年后
 
@@ -139,8 +149,9 @@ class YearSelector(SelectorBase):
         """
         pass
 
+    @staticmethod
     @SelectorMethod("几年内")
-    def _s_11(self, transform_info: TransformInfo) -> bool:
+    def _s_11(transform_info: TransformInfo) -> bool:
         """
         几年内
 

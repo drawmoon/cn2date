@@ -7,7 +7,8 @@ from typing import Callable, Optional
 from lark import Lark, Tree, UnexpectedCharacters
 
 from cn2date.config import get_default_conf
-from cn2date.nl.year import YearSelector
+from cn2date.nl.selector import Selector
+from cn2date.nl.year import _YearSelector
 from cn2date.transform_info import TransformInfo
 from cn2date.util import endof
 from cn2date.visitors import DateTreeVisitor, NLTreeVisitor
@@ -89,7 +90,7 @@ class DateTransformer(LarkTransformer):
 class NLTransformer(LarkTransformer):
     """ """
 
-    __selectors: dict[str, Callable[[TransformInfo], bool]] = {}
+    __selectors: dict[str, Selector] = {}
 
     def initialize(self, transform_info: TransformInfo) -> NLTransformer:
         """ """
@@ -102,12 +103,12 @@ class NLTransformer(LarkTransformer):
         """ """
         return list(self.__selectors.keys())
 
-    def add_selector(self, name: str, selector: Callable[[TransformInfo], bool]) -> NLTransformer:
+    def add_selector(self, selector: Selector) -> NLTransformer:
         """ """
-        if name in self.__selectors:
-            raise ValueError(f"Selectors with the same key already exist: {name}")
+        if selector.name in self.__selectors:
+            raise ValueError(f"Selectors with the same key already exist: {selector.name}")
 
-        self.__selectors[name] = selector
+        self.__selectors[selector.name] = selector
 
         return self
 
@@ -119,7 +120,9 @@ class NLTransformer(LarkTransformer):
 
     def __add_default_selector(self) -> None:
         """ """
-        self.__selectors = {**YearSelector().items}
+        selectors = _YearSelector().selectors
+        for selector in selectors:
+            self.__selectors[selector.name] = selector
 
     def transform(self) -> bool:
         """ """
@@ -128,9 +131,16 @@ class NLTransformer(LarkTransformer):
         visitor = NLTreeVisitor().initialize(self.transform_info)
         visitor.visit(tree)
 
-        for (name, fn) in self.__selectors.items():
-            if self.transform_info.current == name:
-                if fn(self.transform_info):
+        if self.transform_info.current in self.__selectors:
+            self.__selectors[self.transform_info.current].eval(self.transform_info)
+            if self.transform_info.result is None:
+                raise ValueError("No content written to output")
+            self.transform_info.intent = "nl"
+            return True
+
+        for selector in list(self.__selectors.values()):
+            if selector.match(self.transform_info.current):
+                if selector.eval(self.transform_info):
                     if self.transform_info.result is None:
                         raise ValueError("No content written to output")
                     self.transform_info.intent = "nl"
