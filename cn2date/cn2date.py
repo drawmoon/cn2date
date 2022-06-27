@@ -45,7 +45,7 @@ class Cn2Date:
         for ext in self.__extensions:
             if ext.initialize(transform_info).transform():
                 if transform_info.result is None:
-                    raise ValueError(f"Can't parse the text: {transform_info.original_input}")
+                    raise ValueError(f"Can't parse the text: {transform_info.input}")
                 return transform_info.result
 
-        raise ValueError(f"No extension could handle the text: {transform_info.original_input}")
+        raise ValueError(f"No extension could handle the text: {transform_info.input}")

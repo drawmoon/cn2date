@@ -1,3 +1,5 @@
+# pyright: strict
+
 from __future__ import annotations
 
 from cn2date.nl.decorators import SelectorMethod
@@ -8,6 +10,10 @@ from cn2date.util import date_add, date_sub, endof, now, startof
 
 class _YearSelector(SelectorBase):
     """ """
+
+    def __init__(self):
+        self._synonym = {"今": ["本"], "去年": ["上年"], "明年": ["下年"]}
+        super(_YearSelector, self).__init__()
 
     @staticmethod
     @SelectorMethod("今年")
@@ -105,7 +111,15 @@ class _YearSelector(SelectorBase):
         :param transform_info:
         :return:
         """
-        pass
+        if transform_info.args is None or not any(transform_info.args):
+            transform_info.errs.append("Missing parameters")
+            return False
+
+        s = date_sub(startof(now(), "y"), transform_info.args[0], "y")
+        e = startof(now(), "y")
+        transform_info.write(s, e)
+
+        return True
 
     @staticmethod
     @SelectorMethod("后几年")
@@ -119,7 +133,15 @@ class _YearSelector(SelectorBase):
         :param transform_info:
         :return:
         """
-        pass
+        if transform_info.args is None or not any(transform_info.args):
+            transform_info.errs.append("Missing parameters")
+            return False
+
+        s = date_add(startof(now(), "y"), 1, "y")
+        e = date_add(s, transform_info.args[0], "y")
+        transform_info.write(s, e)
+
+        return True
 
     @staticmethod
     @SelectorMethod("几年前")
@@ -133,7 +155,15 @@ class _YearSelector(SelectorBase):
         :param transform_info:
         :return:
         """
-        pass
+        if transform_info.args is None or not any(transform_info.args):
+            transform_info.errs.append("Missing parameters")
+            return False
+
+        s = date_sub(startof(now(), "y"), transform_info.args[0], "y")
+        e = endof(s, "y")
+        transform_info.write(s, e)
+
+        return True
 
     @staticmethod
     @SelectorMethod("几年后")
@@ -147,7 +177,15 @@ class _YearSelector(SelectorBase):
         :param transform_info:
         :return:
         """
-        pass
+        if transform_info.args is None or not any(transform_info.args):
+            transform_info.errs.append("Missing parameters")
+            return False
+
+        s = date_add(startof(now(), "y"), transform_info.args[0], "y")
+        e = endof(s, "y")
+        transform_info.write(s, e)
+
+        return True
 
     @staticmethod
     @SelectorMethod("几年内")
@@ -161,4 +199,12 @@ class _YearSelector(SelectorBase):
         :param transform_info:
         :return:
         """
-        pass
+        if transform_info.args is None or not any(transform_info.args):
+            transform_info.errs.append("Missing parameters")
+            return False
+
+        s = date_sub(startof(now(), "y"), transform_info.args[0] - 1, "y")
+        e = date_add(startof(now(), "y"), 1, "y")
+        transform_info.write(s, e)
+
+        return True
