@@ -6,6 +6,12 @@ import inspect
 from typing import Callable, Optional
 
 from cn2date.transform_info import TransformInfo
+from cn2date.util import SimpleTransform
+
+
+class SelectorPreDefinedVariable:
+    arg = ":ARG:"
+    variables = [arg]
 
 
 class Selector:
@@ -47,6 +53,29 @@ class Selector:
             for s in arr:
                 transform_info.current = transform_info.current.replace(s, k)
 
+    def __handle_variable(self, transform_info: TransformInfo) -> None:
+        """
+
+        :param transform_info:
+        :return:
+        """
+        for var in SelectorPreDefinedVariable.variables:
+            if var in self.name:
+                # 提取预定义变量占位符处的值，并将该值替换为预定义变量占位符
+                # 例如："前30天" 处理完后的结果为 ["前:ARG:天", 30]
+                head = self.name.index(var)
+                tail = self.name[::-1].index(var[::-1])
+
+                s = transform_info.current.replace(transform_info.current[0:head], "")[::-1]
+                s = s.replace(s[0:tail], "")[::-1]
+
+                try:
+                    transform_info.args.append(int(SimpleTransform().cn2num(s)))
+                except ValueError:
+                    pass
+
+                transform_info.current = transform_info.current.replace(s, var)
+
     def __match(self, transform_info: TransformInfo) -> bool:
         """
 
@@ -61,10 +90,15 @@ class Selector:
         :param transform_info:
         :return:
         """
+        # 处理代名词
         self.__handle_synonym(transform_info)
+        # 处理预定义变量
+        self.__handle_variable(transform_info)
+
         if not self.__match(transform_info):
             transform_info.current = transform_info.input
             return False
+
         return self.__fn(transform_info)
 
 

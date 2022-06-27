@@ -15,7 +15,12 @@ class SelectorMethod:
     def __init__(
         self, name: str, rule: Optional[Callable[[str], bool]] = None, synonym: Optional[dict[str, list[str]]] = None
     ):
-        """ """
+        """
+
+        :param name:
+        :param rule:
+        :param synonym:
+        """
         self.name = name
         self.__rule = rule
         self.synonym = synonym

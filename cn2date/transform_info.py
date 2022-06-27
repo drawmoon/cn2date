@@ -14,7 +14,7 @@ class TransformInfo:
 
     input: str
     current: str | None
-    args: list[int] | None
+    args: list[int]
     result: S2E | None
     errs: list[str]
     intent: Literal["date", "nl", "group"] | str | None
@@ -27,7 +27,7 @@ class TransformInfo:
         """
         self.input = text
         self.current = None
-        self.args = None
+        self.args = []
         self.result = None
         self.errs = []
         self.intent = None

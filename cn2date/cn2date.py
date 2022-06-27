@@ -14,23 +14,38 @@ class Cn2Date:
     __extensions: list[TransformerBase] = []
 
     def get_extensions(self) -> tuple[TransformerBase]:
-        """ """
+        """
+
+        :return:
+        """
         return tuple(self.__extensions)
 
     def add_extensions(self, *extensions: TransformerBase) -> Cn2Date:
-        """ """
+        """
+
+        :param extensions:
+        :return:
+        """
         for extension in extensions:
             self.__extensions.append(extension)
         return self
 
     def remove_extensions(self, *extensions: TransformerBase) -> Cn2Date:
-        """ """
+        """
+
+        :param extensions:
+        :return:
+        """
         for extension in extensions:
             self.__extensions.remove(extension)
         return self
 
     def parse(self, text: str) -> tuple[datetime, datetime]:
-        """ """
+        """
+
+        :param text:
+        :return:
+        """
         if text is None or text.isspace():
             raise ValueError("The parameter text is None or empty")
 
@@ -41,7 +56,11 @@ class Cn2Date:
         return self.__preceded(transform_info).to_tuple()
 
     def __preceded(self, transform_info: TransformInfo) -> S2E:
-        """ """
+        """
+
+        :param transform_info:
+        :return:
+        """
         for ext in self.__extensions:
             if ext.initialize(transform_info).transform():
                 if transform_info.result is None:

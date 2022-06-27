@@ -332,7 +332,7 @@ class SimpleTransform:
 
         return val
 
-    def cn2num(self, s: str):
+    def cn2num(self, s: str) -> str:
         if s == self._10:
             return "10"
 

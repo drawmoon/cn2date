@@ -100,7 +100,7 @@ class _YearSelector(SelectorBase):
         return True
 
     @staticmethod
-    @SelectorMethod("前几年")
+    @SelectorMethod("前:ARG:年")
     def _s_7(transform_info: TransformInfo) -> bool:
         """
         前几年
@@ -122,7 +122,7 @@ class _YearSelector(SelectorBase):
         return True
 
     @staticmethod
-    @SelectorMethod("后几年")
+    @SelectorMethod("后:ARG:年")
     def _s_8(transform_info: TransformInfo) -> bool:
         """
         后几年
@@ -144,7 +144,7 @@ class _YearSelector(SelectorBase):
         return True
 
     @staticmethod
-    @SelectorMethod("几年前")
+    @SelectorMethod(":ARG:年前")
     def _s_9(transform_info: TransformInfo) -> bool:
         """
         几年前
@@ -166,7 +166,7 @@ class _YearSelector(SelectorBase):
         return True
 
     @staticmethod
-    @SelectorMethod("几年后")
+    @SelectorMethod(":ARG:年后")
     def _s_10(transform_info: TransformInfo) -> bool:
         """
         几年后
@@ -188,7 +188,7 @@ class _YearSelector(SelectorBase):
         return True
 
     @staticmethod
-    @SelectorMethod("几年内")
+    @SelectorMethod(":ARG:年内")
     def _s_11(transform_info: TransformInfo) -> bool:
         """
         几年内
