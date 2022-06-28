@@ -256,7 +256,7 @@ def date_sub(dt: datetime, val: int, fmt: Literal["y", "q", "m", "w", "d"]) -> d
             - w: 周
             - d: 天
 
-    示例
+    示例:
 
     >>> from cn2date.util import date_sub
     >>> dt = datetime(2020, 1, 1)
@@ -291,8 +291,8 @@ def date_sub(dt: datetime, val: int, fmt: Literal["y", "q", "m", "w", "d"]) -> d
 
 
 def date_part(text: str, typ: Optional[Literal["y"]] = None) -> int:
-    st = SimpleTransform()
-    part = st.cn2num(text)
+    st = _SimpleTransform()
+    part = st.cn2numstr(text)
 
     if not part.isdigit():
         raise TypeError("Conversion failed")
@@ -303,45 +303,65 @@ def date_part(text: str, typ: Optional[Literal["y"]] = None) -> int:
     return int(part)
 
 
-class SimpleTransform:
-    _0 = "零"
-    _1 = "一"
-    _10 = "十"
-    d = {
-        "0": _0,
-        "1": _1,
-        "2": "二",
-        "3": "三",
-        "4": "四",
-        "5": "五",
-        "6": "六",
-        "7": "七",
-        "8": "八",
-        "9": "九",
-    }
+class _SimpleTransform:
+    """ """
 
-    num2cn_tb = str.maketrans(d)
-    cn2num_tb = str.maketrans(dict(zip(list(d.values()), list(d.keys()))))
+    chart = {"0": "零", "1": "一", "2": "二", "3": "三", "4": "四", "5": "五", "6": "六", "7": "七", "8": "八", "9": "九"}
 
-    def num2cn(self, s: str, cast_chart_ten=False) -> str:
-        val = s.translate(self.num2cn_tb)
+    num2cn_tb = str.maketrans(chart)
+    cn2num_tb = str.maketrans(dict(zip(list(chart.values()), list(chart.keys()))))
 
-        if cast_chart_ten and len(val) == 2 and val[0] != self._0:
-            val = f"{val[0]}{self._10}" if val[1] == self._0 else f"{val[0]}{self._10}{val[1]}"
-            return val[1:] if val[0] == self._1 else val
+    def num2cn(self, text: str, strict=False) -> str:
+        """
+
+        :param text:
+        :param strict: 严格模式，当值为 True 时，严格按照中文标准翻译，例如："10" -> "十"
+            值为 False 时则按 chart 简单映射翻译，例如："10" -> "一零"，默认为 False
+        :return:
+        """
+        val = text.translate(self.num2cn_tb)
+        if not strict:
+            return val
+
+        str_list = []
+        if len(val) == 2:
+            # 处理 "十x" 的字符串
+            if val[0] != "零":
+                if val[1] == "零":
+                    str_list.append(val[0])
+                    str_list.append("十")
+                else:
+                    str_list.append(val[0])
+                    str_list.append("十")
+                    str_list.append(val[1])
+                return "".join(str_list[1:]) if str_list[0] == "一" else "".join(str_list)
 
         return val
 
-    def cn2num(self, s: str) -> str:
-        if s == self._10:
-            return "10"
+    def cn2numstr(self, text: str) -> str:
+        """
 
-        val = s.translate(self.cn2num_tb)
+        :param text:
+        :return:
+        """
+        d = {"十": "10", "两": "2"}
+        if text in d:
+            return d[text]
 
-        if val[0] == self._10:
+        val = text.translate(self.cn2num_tb)
+
+        if val[0] == "十":
             return f"1{val[1:]}"
 
-        if len(val) >= 2 and val[1] == self._10:
-            return f"{val[:-1]}0" if len(val) == 2 else f"{val[0]}{val[2]}"
+        # 处理 "x十" 的字符串
+        if len(val) >= 2 and val[1] == "十":
+            str_list = []
+            if len(val) == 2:
+                str_list.append(val[:-1])
+                str_list.append("0")
+            else:
+                str_list.append(val[0])
+                str_list.append(val[2])
+            return "".join(str_list)
 
         return val

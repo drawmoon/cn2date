@@ -6,7 +6,7 @@ import inspect
 from typing import Callable, Optional
 
 from cn2date.transform_info import TransformInfo
-from cn2date.util import SimpleTransform
+from cn2date.util import _SimpleTransform
 
 
 class SelectorPreDefinedVariable:
@@ -70,7 +70,7 @@ class Selector:
                 s = s.replace(s[0:tail], "")[::-1]
 
                 try:
-                    transform_info.args.append(int(SimpleTransform().cn2num(s)))
+                    transform_info.args.append(int(_SimpleTransform().cn2numstr(s)))
                 except ValueError:
                     pass
 
@@ -90,13 +90,15 @@ class Selector:
         :param transform_info:
         :return:
         """
+        original = transform_info.current
+
         # 处理代名词
         self.__handle_synonym(transform_info)
         # 处理预定义变量
         self.__handle_variable(transform_info)
 
         if not self.__match(transform_info):
-            transform_info.current = transform_info.input
+            transform_info.current = original
             return False
 
         return self.__fn(transform_info)
