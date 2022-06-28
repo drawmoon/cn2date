@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Callable, Optional
-
 from lark import Lark, Tree, UnexpectedCharacters
 
 from cn2date.config import get_default_conf
 from cn2date.nl.selector import Selector
-from cn2date.nl.year import _YearSelector
+from cn2date.nl.year import YearSelectorCluster
 from cn2date.transform_info import TransformInfo
 from cn2date.util import endof
 from cn2date.visitors import DateTreeVisitor, NLTreeVisitor
@@ -129,7 +127,7 @@ class NLTransformer(LarkTransformer):
 
     def __add_default_selector(self) -> None:
         """ """
-        selectors = _YearSelector().selectors
+        selectors = YearSelectorCluster().selectors
         for selector in selectors:
             self.add_selector(selector)
 

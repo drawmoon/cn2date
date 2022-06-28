@@ -3,17 +3,17 @@
 from __future__ import annotations
 
 from cn2date.nl.decorators import SelectorMethod
-from cn2date.nl.selector import SelectorBase
+from cn2date.nl.selector import SelectorClusterBase
 from cn2date.transform_info import TransformInfo
 from cn2date.util import date_add, date_sub, endof, now, startof
 
 
-class _YearSelector(SelectorBase):
+class YearSelectorCluster(SelectorClusterBase):
     """ """
 
     def __init__(self):
         self._synonym = {"今": ["本"], "去年": ["上年"], "明年": ["下年"]}
-        super(_YearSelector, self).__init__()
+        super(YearSelectorCluster, self).__init__()
 
     @staticmethod
     @SelectorMethod("今年")
