@@ -132,11 +132,11 @@ class NLTransformer(LarkTransformer):
     def __add_default_selector(self) -> None:
         """ """
         selectors = [
-            *YearSelectorSet().selectors,
-            # *QuarterSelectorSet().selectors,
-            # *MonthSelectorSet().selectors,
-            # *WeekSelectorSet().selectors,
-            # *DaySelectorSet().selectors
+            *YearSelectorSet().items,
+            *QuarterSelectorSet().items,
+            *MonthSelectorSet().items,
+            *WeekSelectorSet().items,
+            *DaySelectorSet().items,
         ]
         for selector in selectors:
             self.add_selector(selector)

@@ -125,19 +125,20 @@ class SelectorSetBase:
     选择器集的基类
 
     继承 SelectorClusterBase 类，在初始化类时会自动将类下标记 @SelectorMethod 装饰器的方法
-    转换为 Selector 并添加到 selectors 集合中
+    转换为 Selector 并添加到 items 集合中
     """
 
-    selectors: list[Selector] = []
+    items: list[Selector]
     _synonym: dict[str, list[str]] | None = None
 
     def __init__(self) -> None:
         """
         初始化 SelectorClusterBase 类的新实例
         """
+        self.items = []
+
         # 自动注册标记 @SelectorMethod 装饰器的方法
-        fn_list = inspect.getmembers(self, inspect.isfunction)
-        for (_, m) in fn_list:
+        for (_, m) in inspect.getmembers(self, inspect.isfunction):
             if "__selector__" in m.__dict__:
                 self.__safe_add(m.__dict__["__selector__"])
 
@@ -150,8 +151,8 @@ class SelectorSetBase:
         :param selector: 选择器
         :except ValueError: 当相同名称的选择器重复添加时，则会引发 ValueError 错误
         """
-        if selector.name in [s.name for s in self.selectors]:
+        if selector.name in [s.name for s in self.items]:
             raise ValueError(f"Same key already exist: {selector.name}")
         if self._synonym is not None:
             selector.synonym = dict(selector.synonym, **self._synonym)
-        self.selectors.append(selector)
+        self.items.append(selector)
