@@ -1,3 +1,4 @@
 pytest
 pyinstrument
 pre-commit
+freezegun
