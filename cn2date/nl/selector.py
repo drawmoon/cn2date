@@ -120,9 +120,9 @@ class Selector:
         return self.__fn(transform_info)
 
 
-class SelectorClusterBase:
+class SelectorSetBase:
     """
-    选择器簇的基类
+    选择器集的基类
 
     继承 SelectorClusterBase 类，在初始化类时会自动将类下标记 @SelectorMethod 装饰器的方法
     转换为 Selector 并添加到 selectors 集合中

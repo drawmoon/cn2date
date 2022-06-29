@@ -1,139 +1,119 @@
-# pyright: strict
-
-from __future__ import annotations
-
 from cn2date.nl.decorators import SelectorMethod
 from cn2date.nl.selector import SelectorSetBase
 from cn2date.transform_info import TransformInfo
 from cn2date.util import date_add, date_sub, endof, now, startof
 
 
-class YearSelectorSet(SelectorSetBase):
+class DaySelectorSet(SelectorSetBase):
     """
-    年 选择器集
+    日/天 选择器集
     """
 
     def __init__(self):
         """
-        初始化 YearSelectorCluster 类的新实例
+        初始化 DaySelectorSet 类的新实例
         """
-        self._synonym = {"今": ["本"], "去年": ["上年"], "明年": ["下年"]}
-        super(YearSelectorSet, self).__init__()
+        self._synonym = {"天": ["日"]}
+        super(DaySelectorSet, self).__init__()
 
     @staticmethod
-    @SelectorMethod("今年")
+    @SelectorMethod("今天")
     def _s_1(transform_info: TransformInfo) -> bool:
         """
-        今年
 
         :param transform_info:
         :return:
         """
-        s = startof(now(), "y")
-        e = endof(s, "y")
+        s = startof(now(), "d")
+        e = endof(s, "d")
         transform_info.write(s, e)
         return True
 
     @staticmethod
-    @SelectorMethod("明年")
+    @SelectorMethod("明天")
     def _s_2(transform_info: TransformInfo) -> bool:
         """
-        明年
 
         :param transform_info:
         :return:
         """
-        s = date_add(startof(now(), "y"), 1, "y")
-        e = endof(s, "y")
+        s = date_add(startof(now(), "d"), 1, "d")
+        e = endof(s, "d")
         transform_info.write(s, e)
         return True
 
     @staticmethod
-    @SelectorMethod("去年")
+    @SelectorMethod("后天")
     def _s_3(transform_info: TransformInfo) -> bool:
         """
-        去年
 
         :param transform_info:
         :return:
         """
-        s = date_sub(startof(now(), "y"), 1, "y")
-        e = endof(s, "y")
+        s = date_add(startof(now(), "d"), 2, "d")
+        e = endof(s, "d")
         transform_info.write(s, e)
         return True
 
     @staticmethod
-    @SelectorMethod("前年")
+    @SelectorMethod("昨天")
     def _s_4(transform_info: TransformInfo) -> bool:
         """
-        前年
 
         :param transform_info:
         :return:
         """
-        s = date_sub(startof(now(), "y"), 2, "y")
-        e = endof(s, "y")
+        s = date_sub(startof(now(), "d"), 1, "d")
+        e = endof(s, "d")
         transform_info.write(s, e)
         return True
 
     @staticmethod
-    @SelectorMethod("上半年")
+    @SelectorMethod("前天")
     def _s_5(transform_info: TransformInfo) -> bool:
         """
-        上半年
 
         :param transform_info:
         :return:
         """
-        s = startof(now(), "fhoy")
-        e = endof(s, "fhoy")
+        s = date_sub(startof(now(), "d"), 2, "d")
+        e = endof(s, "d")
         transform_info.write(s, e)
         return True
 
     @staticmethod
-    @SelectorMethod("下半年")
+    @SelectorMethod("上午")
     def _s_6(transform_info: TransformInfo) -> bool:
         """
-        下半年
 
         :param transform_info:
         :return:
         """
-        s = startof(now(), "shoy")
-        e = endof(s, "shoy")
+        s = startof(now(), "am")
+        e = endof(s, "am")
         transform_info.write(s, e)
         return True
 
     @staticmethod
-    @SelectorMethod("前:ARG:年")
+    @SelectorMethod("下午")
     def _s_7(transform_info: TransformInfo) -> bool:
         """
-        前几年
-
-        例如：
-            当前时间 2021/1/1，前三年，即 2018/1/1 - 2021/1/1
 
         :param transform_info:
         :return:
         """
-        if transform_info.args is None or not any(transform_info.args):
-            transform_info.errs.append("Missing parameters")
-            return False
-
-        s = date_sub(startof(now(), "y"), transform_info.args[0], "y")
-        e = startof(now(), "y")
+        s = startof(now(), "pm")
+        e = endof(s, "pm")
         transform_info.write(s, e)
-
         return True
 
     @staticmethod
-    @SelectorMethod("后:ARG:年")
+    @SelectorMethod("前:ARG:天")
     def _s_8(transform_info: TransformInfo) -> bool:
         """
-        后几年
 
-        例如：
-            当前时间 2021/1/1，后三年，即 2022/1/1 - 2025/1/1
+        例如:
+            当前时间 2021/10/1，前三天，即 2021/9/28 - 2021/10/1
 
         :param transform_info:
         :return:
@@ -142,20 +122,18 @@ class YearSelectorSet(SelectorSetBase):
             transform_info.errs.append("Missing parameters")
             return False
 
-        s = date_add(startof(now(), "y"), 1, "y")
-        e = date_add(s, transform_info.args[0], "y")
+        s = date_sub(startof(now(), "d"), transform_info.args[0], "d")
+        e = startof(now(), "d")
         transform_info.write(s, e)
-
         return True
 
     @staticmethod
-    @SelectorMethod(":ARG:年前")
+    @SelectorMethod("后:ARG:天")
     def _s_9(transform_info: TransformInfo) -> bool:
         """
-        几年前
 
-        例如：
-            当前时间 2021/1/1，三年前，即 2018/1/1 - 2019/1/1
+        例如:
+            当前时间 2021/10/1，后三天，即 2021/10/2 - 2021/10/5
 
         :param transform_info:
         :return:
@@ -164,20 +142,18 @@ class YearSelectorSet(SelectorSetBase):
             transform_info.errs.append("Missing parameters")
             return False
 
-        s = date_sub(startof(now(), "y"), transform_info.args[0], "y")
-        e = endof(s, "y")
+        s = date_add(startof(now(), "d"), 1, "d")
+        e = date_add(s, transform_info.args[0], "d")
         transform_info.write(s, e)
-
         return True
 
     @staticmethod
-    @SelectorMethod(":ARG:年后")
+    @SelectorMethod(":ARG:天前")
     def _s_10(transform_info: TransformInfo) -> bool:
         """
-        几年后
 
-        例如：
-            当前时间 2021/1/1，三年后，即 2024/1/1 - 2025/1/1
+        例如:
+            当前时间 2021/10/1，三天前，即 2021/9/28 - 2021/9/29
 
         :param transform_info:
         :return:
@@ -186,20 +162,18 @@ class YearSelectorSet(SelectorSetBase):
             transform_info.errs.append("Missing parameters")
             return False
 
-        s = date_add(startof(now(), "y"), transform_info.args[0], "y")
-        e = endof(s, "y")
+        s = date_sub(startof(now(), "d"), transform_info.args[0], "d")
+        e = endof(s, "d")
         transform_info.write(s, e)
-
         return True
 
     @staticmethod
-    @SelectorMethod(":ARG:年内")
+    @SelectorMethod(":ARG:天后")
     def _s_11(transform_info: TransformInfo) -> bool:
         """
-        几年内
 
-        例如：
-            当前时间 2021/1/1，三年内，即 2019/1/1 - 2022/1/1
+        例如:
+            当前时间 2021/10/1，三天后，即 2021/10/4 - 2021/10/5
 
         :param transform_info:
         :return:
@@ -208,8 +182,27 @@ class YearSelectorSet(SelectorSetBase):
             transform_info.errs.append("Missing parameters")
             return False
 
-        s = date_sub(startof(now(), "y"), transform_info.args[0] - 1, "y")
-        e = date_add(startof(now(), "y"), 1, "y")
+        s = date_add(startof(now(), "d"), transform_info.args[0], "d")
+        e = endof(s, "d")
         transform_info.write(s, e)
+        return True
 
+    @staticmethod
+    @SelectorMethod(":ARG:天内")
+    def _s_12(transform_info: TransformInfo) -> bool:
+        """
+
+        例如:
+            当前时间 2021/10/1，三天后，即 2021/10/4 - 2021/10/5
+
+        :param transform_info:
+        :return:
+        """
+        if transform_info.args is None or not any(transform_info.args):
+            transform_info.errs.append("Missing parameters")
+            return False
+
+        s = date_add(startof(now(), "d"), transform_info.args[0], "d")
+        e = endof(s, "d")
+        transform_info.write(s, e)
         return True
