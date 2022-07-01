@@ -20,6 +20,43 @@ class SelectorPreDefinedVariable:
     arg = ":ARG:"
     variables = [arg]
 
+    @staticmethod
+    def parse(text: str) -> list[str]:
+        """
+
+        :param text:
+        :return:
+        """
+        last_end = 0
+        operator = -1
+
+        items: list[str] = []
+        for i, s in enumerate(text):
+            if s == ":":
+                if operator == -1:
+                    if last_end != i:
+                        items.append(text[last_end:i])
+
+                    operator = i
+                else:
+                    items.append(text[operator : i + 1])
+                    operator = -1
+
+                last_end = i + 1
+        else:
+            items.append(text[last_end : len(text)])
+
+        return items
+
+    @staticmethod
+    def is_variable(text: str) -> bool:
+        """
+
+        :param text:
+        :return:
+        """
+        return text[0] == ":" and text[::-1][0] == ":"
+
 
 class Selector:
     """
@@ -75,20 +112,36 @@ class Selector:
             if var in self.name:
                 # 提取预定义变量占位符处的值，并将该值替换为预定义变量占位符
                 # 例如："前30天" 处理完后的结果为 ["前:ARG:天", 30]
-                head = self.name.index(var)
-                tail = self.name[::-1].index(var[::-1])
+                current = transform_info.current
 
-                s = transform_info.current.replace(transform_info.current[0:head], "")[::-1]
-                s = s.replace(s[0:tail], "")[::-1]
+                # 尝试解析 Selector.name
+                items = SelectorPreDefinedVariable.parse(self.name)
 
-                # 尝试将预定义变量占位符处的值添加到 transform_info.args 中
                 try:
-                    transform_info.args.append(int(_SimpleTransform().cn2numstr(s)))
+                    # 尝试查找参数
+                    args: list[str] = []
+
+                    index = 0
+                    last_end = -1
+
+                    for item in items:
+                        if SelectorPreDefinedVariable.is_variable(item):
+                            last_end = index
+                        else:
+                            if last_end != -1:
+                                args.append(current[last_end : current.index(item)])
+                            index = current.index(item) + len(item)
+                            if index >= len(current):
+                                break
+
+                    for arg in args:
+                        # 尝试将预定义变量占位符处的值添加到 transform_info.args 中
+                        transform_info.args.append(int(_SimpleTransform().cn2numstr(arg)))
+
+                        # 设置处理完成后的当前值
+                        transform_info.current = transform_info.current.replace(arg, var)
                 except ValueError:
                     pass
-
-                # 设置处理完成后的当前值
-                transform_info.current = transform_info.current.replace(s, var)
 
     def __match(self, transform_info: TransformInfo) -> bool:
         """
