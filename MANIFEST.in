@@ -1,1 +1,1 @@
-include date.lark
+include cn2date/date.lark
