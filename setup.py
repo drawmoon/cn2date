@@ -1,15 +1,4 @@
-import re
-from pathlib import Path
-
 from setuptools import find_packages, setup
-
-
-def get_version() -> str:
-    """
-    获取版本号，与 `__init__` 中列出的版本号一致
-    """
-    version = Path("cn2date", "__version__.py").read_text()
-    return re.search("__version__ = ['\"]([^'\"]+)['\"]", version).group(1)
 
 
 def get_long_description() -> str:
@@ -24,7 +13,7 @@ def get_long_description() -> str:
 if __name__ == "__main__":
     setup(
         name="cn2date",
-        version=get_version(),
+        version="0.1.0b1",
         description="中文日期 、口语 转换为 日期字符串",
         author="drawmoon",
         author_email="1340260725@qq.com",
@@ -32,9 +21,10 @@ if __name__ == "__main__":
         long_description=get_long_description(),
         long_description_content_type="text/markdown",
         packages=find_packages(),
-        install_requires=["lark-parser", "python-dateutil"],
+        install_requires=["lark-parser", "python-dateutil", "typing-extensions"],
         include_package_data=True,
-        python_requires=">=3.8",
+        package_data={"cn2date": ["cn2date/date.lark"]},
+        python_requires=">=3.7",
         license="MIT License",
         classifiers=[
             "Programming Language :: Python :: 3.9",
