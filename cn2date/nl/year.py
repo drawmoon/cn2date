@@ -111,7 +111,7 @@ class YearSelectorSet(SelectorSetBase):
         前几年
 
         例如：
-            当前时间 2021/1/1，前三年，即 2018/1/1 - 2021/1/1
+            当前时间 2021/1/1，前三年，即 2018/1/1 00:00:00 - 2021/1/1 00:00:00
 
         :param transform_info:
         :return:
@@ -133,7 +133,7 @@ class YearSelectorSet(SelectorSetBase):
         后几年
 
         例如：
-            当前时间 2021/1/1，后三年，即 2022/1/1 - 2025/1/1
+            当前时间 2021/1/1，后三年，即 2022/1/1 00:00:00 - 2025/1/1 00:00:00
 
         :param transform_info:
         :return:
@@ -155,7 +155,7 @@ class YearSelectorSet(SelectorSetBase):
         几年前
 
         例如：
-            当前时间 2021/1/1，三年前，即 2018/1/1 - 2019/1/1
+            当前时间 2021/1/1，三年前，即 2018/1/1 00:00:00 - 2019/1/1 00:00:00
 
         :param transform_info:
         :return:
@@ -177,7 +177,7 @@ class YearSelectorSet(SelectorSetBase):
         几年后
 
         例如：
-            当前时间 2021/1/1，三年后，即 2024/1/1 - 2025/1/1
+            当前时间 2021/1/1，三年后，即 2024/1/1 00:00:00 - 2025/1/1 00:00:00
 
         :param transform_info:
         :return:
@@ -199,7 +199,7 @@ class YearSelectorSet(SelectorSetBase):
         几年内
 
         例如：
-            当前时间 2021/1/1，三年内，即 2019/1/1 - 2022/1/1
+            当前时间 2021/1/1，三年内，即 2019/1/1 00:00:00 - 2022/1/1 00:00:00
 
         :param transform_info:
         :return:

@@ -13,6 +13,7 @@ class WeekSelectorSet(SelectorSetBase):
         """
         初始化 WeekSelectorSet 类的新实例
         """
+        self._synonym = {"周": ["星期"]}
         super(WeekSelectorSet, self).__init__()
 
     @staticmethod
@@ -60,7 +61,7 @@ class WeekSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，前三周，即 2021/9/6 - 2021/9/27
+            当前时间 2021/10/1，前三周，即 2021/9/6 00:00:00 - 2021/9/27 00:00:00
 
         :param transform_info:
         :return:
@@ -80,7 +81,7 @@ class WeekSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，后三周，即 2021/10/4 - 2021/10/25
+            当前时间 2021/10/1，后三周，即 2021/10/4 00:00:00 - 2021/10/25 00:00:00
 
         :param transform_info:
         :return:
@@ -100,7 +101,7 @@ class WeekSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三周前，即 2021/9/6 - 2021/9/13
+            当前时间 2021/10/1，三周前，即 2021/9/6 00:00:00 - 2021/9/13 00:00:00
 
         :param transform_info:
         :return:
@@ -120,7 +121,7 @@ class WeekSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三周后，即 2021/10/18 - 2021/10/25
+            当前时间 2021/10/1，三周后，即 2021/10/18 00:00:00 - 2021/10/25 00:00:00
 
         :param transform_info:
         :return:
@@ -140,7 +141,7 @@ class WeekSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三周内，即 2021/9/13 - 2021/10/4
+            当前时间 2021/10/1，三周内，即 2021/9/13 00:00:00 - 2021/10/4 00:00:00
 
         :param transform_info:
         :return:

@@ -113,7 +113,7 @@ class DaySelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，前三天，即 2021/9/28 - 2021/10/1
+            当前时间 2021/10/1，前三天，即 2021/9/28 00:00:00 - 2021/10/1 00:00:00
 
         :param transform_info:
         :return:
@@ -133,7 +133,7 @@ class DaySelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，后三天，即 2021/10/2 - 2021/10/5
+            当前时间 2021/10/1，后三天，即 2021/10/2 00:00:00 - 2021/10/5 00:00:00
 
         :param transform_info:
         :return:
@@ -153,7 +153,7 @@ class DaySelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三天前，即 2021/9/28 - 2021/9/29
+            当前时间 2021/10/1，三天前，即 2021/9/28 00:00:00 - 2021/9/29 00:00:00
 
         :param transform_info:
         :return:
@@ -173,7 +173,7 @@ class DaySelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三天后，即 2021/10/4 - 2021/10/5
+            当前时间 2021/10/1，三天后，即 2021/10/4 00:00:00 - 2021/10/5 00:00:00
 
         :param transform_info:
         :return:
@@ -193,7 +193,7 @@ class DaySelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三天后，即 2021/10/4 - 2021/10/5
+            当前时间 2021/10/1，三天内，即 2021/9/29 00:00:00 - 2021/10/2 00:00:00
 
         :param transform_info:
         :return:
@@ -202,7 +202,7 @@ class DaySelectorSet(SelectorSetBase):
             transform_info.errs.append("Missing parameters")
             return False
 
-        s = date_add(startof(now(), "d"), transform_info.args[0], "d")
-        e = endof(s, "d")
+        s = date_sub(startof(now(), "d"), transform_info.args[0] - 1, "d")
+        e = date_add(startof(now(), "d"), 1, "d")
         transform_info.write(s, e)
         return True

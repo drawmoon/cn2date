@@ -60,7 +60,7 @@ class MonthSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，前三月，即 2021/7/1 - 2021/10/1
+            当前时间 2021/10/1，前三月，即 2021/7/1 00:00:00 - 2021/10/1 00:00:00
 
         :param transform_info:
         :return:
@@ -80,7 +80,7 @@ class MonthSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，后三月，即 2021/11/1 - 2022/2/1
+            当前时间 2021/10/1，后三月，即 2021/11/1 00:00:00 - 2022/2/1 00:00:00
 
         :param transform_info:
         :return:
@@ -100,7 +100,7 @@ class MonthSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三月前，即 2021/7/1 - 2021/8/1
+            当前时间 2021/10/1，三月前，即 2021/7/1 00:00:00 - 2021/8/1 00:00:00
 
         :param transform_info:
         :return:
@@ -120,7 +120,7 @@ class MonthSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三月后，即 2022/1/1 - 2022/2/1
+            当前时间 2021/10/1，三月后，即 2022/1/1 00:00:00 - 2022/2/1 00:00:00
 
         :param transform_info:
         :return:
@@ -140,7 +140,7 @@ class MonthSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，三月内，即 2021/8/1 - 2021/11/1
+            当前时间 2021/10/1，三月内，即 2021/8/1 00:00:00 - 2021/11/1 00:00:00
 
         :param transform_info:
         :return:

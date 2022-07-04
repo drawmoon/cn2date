@@ -98,7 +98,7 @@ class QuarterSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，前两季度，即 2021/4/1 - 2021/10/1
+            当前时间 2021/10/1，前两季度，即 2021/4/1 00:00:00 - 2021/10/1 00:00:00
 
         :param transform_info:
         :return:
@@ -118,7 +118,7 @@ class QuarterSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，后两季度，即 2022/1/1 - 2022/7/1
+            当前时间 2021/10/1，后两季度，即 2022/1/1 00:00:00 - 2022/7/1 00:00:00
 
         :param transform_info:
         :return:
@@ -138,7 +138,7 @@ class QuarterSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，两季度前，即 2021/4/1 - 2021/7/1
+            当前时间 2021/10/1，两季度前，即 2021/4/1 00:00:00 - 2021/7/1 00:00:00
 
         :param transform_info:
         :return:
@@ -158,7 +158,7 @@ class QuarterSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，两季度后，即 2022/4/1 - 2022/7/1
+            当前时间 2021/10/1，两季度后，即 2022/4/1 00:00:00 - 2022/7/1 00:00:00
 
         :param transform_info:
         :return:
@@ -178,7 +178,7 @@ class QuarterSelectorSet(SelectorSetBase):
         """
 
         例如:
-            当前时间 2021/10/1，两季度内，即 2021/7/1 - 2022/1/1
+            当前时间 2021/10/1，两季度内，即 2021/7/1 00:00:00 - 2022/1/1 00:00:00
 
         :param transform_info:
         :return:
