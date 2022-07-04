@@ -4,7 +4,7 @@ from .cn2date import Cn2Date
 
 __title__ = "cn2date"
 __description__ = "中文日期 、口语 转换为 日期字符串"
-__version__ = "0.0.4"
+__version__ = "0.1.0b1"
 
 
 def create_default() -> Cn2Date:
