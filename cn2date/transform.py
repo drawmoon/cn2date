@@ -147,6 +147,8 @@ class NLTransformer(LarkTransformer):
         :return:
         """
         tree = self._parse(get_default_conf()[1])
+        if tree is None:
+            return False
 
         visitor = NLTreeVisitor().initialize(self.transform_info)
         visitor.visit(tree)

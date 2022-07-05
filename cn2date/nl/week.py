@@ -1,3 +1,5 @@
+# pyright: strict
+
 from cn2date.nl.decorators import SelectorMethod
 from cn2date.nl.selector import SelectorSetBase
 from cn2date.transform_info import TransformInfo

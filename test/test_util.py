@@ -1,6 +1,10 @@
+# pyright: strict
+
 from datetime import datetime
+from typing import Optional
 
 import pytest
+from typing_extensions import Literal
 
 from cn2date.util import DateBuilder, date_add, date_part, date_sub, endof, startof
 
@@ -15,9 +19,6 @@ def test_date_builder():
 
     bdr.day(15)
     assert bdr.build() == datetime(2021, 2, 15)
-
-    # with pytest.raises(ValueError):
-    #     dbr.year(None)
 
 
 def test_startof():
@@ -62,9 +63,6 @@ def test_startof():
     pm = startof(dt, "pm")
     assert pm == datetime(2021, 9, 15, 12, 0, 0)
 
-    with pytest.raises(ValueError):
-        startof(dt, "x")
-
 
 def test_endof():
     dt = datetime(2021, 9, 15)
@@ -108,9 +106,6 @@ def test_endof():
     pm = endof(dt, "pm")
     assert pm == datetime(2021, 9, 15, 19, 0, 0)
 
-    with pytest.raises(ValueError):
-        endof(dt, "x")
-
 
 def test_date_add():
     dt = datetime(2021, 9, 15)
@@ -129,9 +124,6 @@ def test_date_add():
 
     d = date_add(dt, 1, "d")
     assert d == datetime(2021, 9, 16)
-
-    with pytest.raises(ValueError):
-        date_add(dt, 1, "x")
 
 
 def test_date_sub():
@@ -152,9 +144,6 @@ def test_date_sub():
     d = date_sub(dt, 1, "d")
     assert d == datetime(2021, 9, 14)
 
-    with pytest.raises(ValueError):
-        date_sub(dt, 1, "x")
-
 
 to_datepart_testdata = [
     ("y", "07", 2007),
@@ -162,14 +151,14 @@ to_datepart_testdata = [
     ("y", "2017", 2017),
     ("y", "一七", 2017),
     ("y", "二零一七", 2017),
-    ("m", "1", 1),
-    ("m", "12", 12),
-    ("m", "一", 1),
-    ("m", "十二", 12),
-    ("d", "1", 1),
-    ("d", "31", 31),
-    ("d", "一", 1),
-    ("d", "三十一", 31),
+    (None, "1", 1),
+    (None, "12", 12),
+    (None, "一", 1),
+    (None, "十二", 12),
+    (None, "1", 1),
+    (None, "31", 31),
+    (None, "一", 1),
+    (None, "三十一", 31),
 ]
 
 
@@ -178,7 +167,7 @@ to_datepart_testdata = [
     to_datepart_testdata,
     ids=[i[1] for i in to_datepart_testdata],
 )
-def test_date_part(typ, text: str, expected: int):
+def test_date_part(typ: Optional[Literal["y"]], text: str, expected: int):
     n = date_part(text, typ)
 
     assert n == expected

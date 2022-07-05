@@ -13,7 +13,7 @@ class TransformInfo:
     """ """
 
     input: str
-    current: str | None
+    current: str
     args: list[int]
     result: S2E | None
     errs: list[str]
@@ -26,7 +26,7 @@ class TransformInfo:
         :return:
         """
         self.input = text
-        self.current = None
+        self.current = ""
         self.args = []
         self.result = None
         self.errs = []
@@ -42,4 +42,4 @@ class TransformInfo:
         :return:
         """
         self.result = S2E(start, end)
-        self.current = None
+        self.current = ""

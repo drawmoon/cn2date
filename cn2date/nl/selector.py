@@ -6,7 +6,7 @@ import inspect
 from typing import Callable, Optional
 
 from cn2date.transform_info import TransformInfo
-from cn2date.util import _SimpleTransform
+from cn2date.util import SimpleTransform, none_or_whitespace
 
 
 class SelectorPreDefinedVariable:
@@ -95,7 +95,7 @@ class Selector:
 
         :param transform_info:
         """
-        if self.synonym is None:
+        if none_or_whitespace(transform_info.current) or self.synonym is None:
             return
 
         for k, arr in self.synonym.items():
@@ -108,6 +108,9 @@ class Selector:
 
         :param transform_info:
         """
+        if none_or_whitespace(transform_info.current):
+            return
+
         for var in SelectorPreDefinedVariable.variables:
             if var in self.name:
                 # 提取预定义变量占位符处的值，并将该值替换为预定义变量占位符
@@ -136,7 +139,7 @@ class Selector:
 
                     for arg in args:
                         # 尝试将预定义变量占位符处的值添加到 transform_info.args 中
-                        transform_info.args.append(int(_SimpleTransform().cn2numstr(arg)))
+                        transform_info.args.append(int(SimpleTransform().cn2numstr(arg)))
 
                         # 设置处理完成后的当前值
                         transform_info.current = transform_info.current.replace(arg, var)
@@ -150,6 +153,8 @@ class Selector:
         :param transform_info:
         :return: 如果匹配成功，则返回 True，否则返回 False
         """
+        if none_or_whitespace(transform_info.current):
+            return False
         return self.__rule(transform_info.current) if self.__rule is not None else transform_info.current == self.name
 
     def eval(self, transform_info: TransformInfo) -> bool:
@@ -159,6 +164,9 @@ class Selector:
         :param transform_info:
         :return: 如果可以评估选择器，将返回 True，否则返回 False
         """
+        if none_or_whitespace(transform_info.current):
+            return False
+
         original = transform_info.current
 
         # 处理代名词
