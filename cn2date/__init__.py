@@ -11,7 +11,7 @@ from .cn2date import Cn2Date
 
 __title__: str = "cn2date"
 __description__: str = "中文日期 、口语 转换为 日期字符串"
-__version__: str = "0.1.0b1"
+__version__: str = "0.1.0b2"
 
 
 def create_default() -> Cn2Date:
