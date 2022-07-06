@@ -7,7 +7,7 @@ from typing import Any
 from lark import Token, Tree, Visitor
 
 from cn2date.transform_info import TransformInfo
-from cn2date.util import DateBuilder, date_part, none_or_whitespace, now
+from cn2date.util import DateBuilder, date_part, isblank, now
 
 
 class VisitorBase(Visitor[Any]):
@@ -41,7 +41,7 @@ class VisitorBase(Visitor[Any]):
                 raise TypeError("The child of tree is not Token")
             self.transform_info.current += child
 
-        if none_or_whitespace(self.transform_info.current):
+        if isblank(self.transform_info.current):
             raise ValueError("Failed to take value of the current node")
 
 

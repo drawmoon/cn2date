@@ -369,9 +369,9 @@ class SimpleTransform:
         return val
 
 
-def none_or_whitespace(s: str | None) -> bool:
+def isblank(s: str | None) -> bool:
     """
-
+    检查字符串是否为空格、空 ("") 或 None。
     :param s:
     :return:
     """

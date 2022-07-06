@@ -6,7 +6,7 @@ import inspect
 from typing import Callable, Optional
 
 from cn2date.transform_info import TransformInfo
-from cn2date.util import SimpleTransform, none_or_whitespace
+from cn2date.util import SimpleTransform, isblank
 
 
 class SelectorPreDefinedVariable:
@@ -95,7 +95,7 @@ class Selector:
 
         :param transform_info:
         """
-        if none_or_whitespace(transform_info.current) or self.synonym is None:
+        if isblank(transform_info.current) or self.synonym is None:
             return
 
         for k, arr in self.synonym.items():
@@ -108,7 +108,7 @@ class Selector:
 
         :param transform_info:
         """
-        if none_or_whitespace(transform_info.current):
+        if isblank(transform_info.current):
             return
 
         for var in SelectorPreDefinedVariable.variables:
@@ -153,7 +153,7 @@ class Selector:
         :param transform_info:
         :return: 如果匹配成功，则返回 True，否则返回 False
         """
-        if none_or_whitespace(transform_info.current):
+        if isblank(transform_info.current):
             return False
         return self.__rule(transform_info.current) if self.__rule is not None else transform_info.current == self.name
 
@@ -164,7 +164,7 @@ class Selector:
         :param transform_info:
         :return: 如果可以评估选择器，将返回 True，否则返回 False
         """
-        if none_or_whitespace(transform_info.current):
+        if isblank(transform_info.current):
             return False
 
         original = transform_info.current
