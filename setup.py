@@ -21,7 +21,7 @@ if __name__ == "__main__":
         long_description=get_long_description(),
         long_description_content_type="text/markdown",
         packages=find_packages(),
-        install_requires=["lark-parser", "python-dateutil", "typing-extensions"],
+        install_requires=["lark-parser", "python-dateutil", "typing-extensions", "tomli"],
         include_package_data=True,
         python_requires=">=3.7",
         license="MIT License",

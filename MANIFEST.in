@@ -1,1 +1,1 @@
-include cn2date/date.lark
+include cn2date/settings.toml

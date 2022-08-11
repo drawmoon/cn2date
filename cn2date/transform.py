@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from lark import Lark, Tree, UnexpectedCharacters
 
-from cn2date.config import get_default_conf
 from cn2date.nl.day import DaySelectorSet
 from cn2date.nl.month import MonthSelectorSet
 from cn2date.nl.quarter import QuarterSelectorSet
@@ -12,7 +11,7 @@ from cn2date.nl.selector import Selector
 from cn2date.nl.week import WeekSelectorSet
 from cn2date.nl.year import YearSelectorSet
 from cn2date.transform_info import TransformInfo
-from cn2date.util import endof
+from cn2date.util import endof, get_settings
 from cn2date.visitors import DateTreeVisitor, NLTreeVisitor
 
 
@@ -41,6 +40,8 @@ class TransformerBase:
 class LarkTransformer(TransformerBase):
     """ """
 
+    _settings = get_settings()
+
     def _parse(self, grammar: str) -> Tree | None:
         """
 
@@ -63,7 +64,7 @@ class DateTransformer(LarkTransformer):
         :return:
         """
 
-        tree = self._parse(get_default_conf()[0])
+        tree = self._parse(self._settings["date_lark_grammar"])
         if tree is None:
             return False
 
@@ -146,7 +147,7 @@ class NLTransformer(LarkTransformer):
 
         :return:
         """
-        tree = self._parse(get_default_conf()[1])
+        tree = self._parse(self._settings["nl_lark_grammar"])
         if tree is None:
             return False
 

@@ -1,3 +1,4 @@
+date_lark_grammar = """
 start: date
 
 date: years _year_delimiter months _month_delimiter days _day_delimiter?
@@ -43,9 +44,9 @@ _day_1_9  : ONE_NINE
 
 ZERO_NINE: /[0-9零一二三四五六七八九]/
 ONE_NINE : /[1-9一二三四五六七八九]/
+"""
 
-===
-
+nl_lark_grammar = """
 start: nl
 
 nl       : FRONT "个"? DATE_UNIT
@@ -62,3 +63,4 @@ DIGIT      : /["0-9零一二三四五六七八九十"]/
 
 // 忽略的字符
 %ignore " " | "份" | "度" | "第"
+"""

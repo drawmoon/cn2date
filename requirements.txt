@@ -1,3 +1,4 @@
 lark-parser
 python-dateutil
 typing-extensions
+tomli

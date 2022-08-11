@@ -5,8 +5,20 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
+import tomli
 from dateutil.relativedelta import relativedelta
+from pkg_resources import resource_stream
 from typing_extensions import Literal
+
+
+def get_settings() -> dict:
+    """
+    获取应用配置，读取 `settings.toml` 配置文件
+    :return:
+    """
+
+    with resource_stream("cn2date", "settings.toml") as stream:
+        return tomli.load(stream)
 
 
 def now() -> datetime:

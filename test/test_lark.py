@@ -1,4 +1,4 @@
-from pathlib import Path
+from cn2date.util import get_settings
 from test.util import get_node_value
 
 import pytest
@@ -148,12 +148,9 @@ def test_day_lark():
     __test(g, matched, unmatched)
 
 
-file = Path(__file__).parent.parent / "cn2date/date.lark"
-file_text = open(file, "r", encoding="utf-8").read()
-grammars = file_text.split("===")
-
-date_parser = Lark(grammars[0])
-nl_parser = Lark(grammars[1])
+settings = get_settings()
+date_parser = Lark(settings["date_lark_grammar"])
+nl_parser = Lark(settings["nl_lark_grammar"])
 
 
 date_testdata = [
