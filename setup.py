@@ -23,7 +23,6 @@ if __name__ == "__main__":
         packages=find_packages(),
         install_requires=["lark-parser", "python-dateutil", "typing-extensions"],
         include_package_data=True,
-        package_data={"cn2date": ["cn2date/date.lark"]},
         python_requires=">=3.7",
         license="MIT License",
         classifiers=[

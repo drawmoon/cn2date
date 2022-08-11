@@ -28,4 +28,5 @@ __all__: list[str] = [
     "parse",
     "default",
     "create_default",
+    "Cn2Date",
 ]
