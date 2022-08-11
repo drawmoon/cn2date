@@ -5,7 +5,7 @@ proj_dir = Path(__file__).parent.parent
 
 sys.path.append(str(proj_dir))
 
-from pyinstrument import Profiler
+from pyinstrument import Profiler  # pyright: ignore[reportPrivateImportUsage]
 
 words = ["2021-9-17", "2021年9月17日", "二零二一年九月十七日", "今年", "本季度", "今天"]
 

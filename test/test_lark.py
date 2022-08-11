@@ -1,8 +1,9 @@
-from cn2date.util import get_settings
 from test.util import get_node_value
 
 import pytest
 from lark import Lark
+
+from cn2date.util import get_settings
 
 
 def __test(g: str, matched, unmatched):
