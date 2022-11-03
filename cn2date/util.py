@@ -354,7 +354,12 @@ class SimpleTransform:
 
     def cn2numstr(self, text: str) -> str:
         """
+        将汉字数字转换为阿拉伯数字
 
+        例如：
+            `"一二三四五六"` -> `"123456"` \n
+            `"零一"` -> `"01"` \n
+            `"十一"` -> `"11"` \n
         :param text:
         :return:
         """
@@ -385,6 +390,6 @@ def isblank(s: str | None) -> bool:
     """
     检查字符串是否为空格、空 ("") 或 None。
     :param s:
-    :return:
+    :return: 如果为空格、空 ("") 或 None 则返回 True，否则返回 False
     """
     return s is None or not s or s.isspace()
