@@ -1,1 +1,9 @@
-include cn2date/settings.toml
+include LICENSE
+include README.md
+include requirements.txt
+
+recursive-include cn2date *
+
+recursive-exclude * .DS_Store
+recursive-exclude * __pycache__
+recursive-exclude * .pytest_cache

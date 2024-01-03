@@ -1,70 +1,86 @@
-# pyright: strict
+from os import path
+from typing import Optional
 
-from __future__ import annotations
+import hanlp
+from lark import Lark
 
-from datetime import datetime
+from .transform import ChineDateTransformer, DateBetween, NormDateTransformer, transform
 
-from cn2date.s2e import S2E
-from cn2date.transform import TransformerBase, TransformInfo
+__dir__ = path.dirname(__file__)
+
+# 标准日期格式字符解析
+NORM_DATE_GRAMMAR_FILE = path.join(__dir__, "norm_date.lark")
+# 口语化日期格式字符解析
+CHINE_DATE_GRAMMAR_FILE = path.join(__dir__, "chine_date.lark")
+
+_dict = dict()
 
 
-class Cn2Date:
-    """ """
+def parse(s: str) -> Optional[DateBetween]:
+    func_arr = [_norm_date_parse, _chine_date_parse]
+    for func in func_arr:
+        dt = func(s)
+        if dt:
+            return dt
+    return None
 
-    __extensions: list[TransformerBase] = []
 
-    def get_extensions(self) -> tuple[TransformerBase]:
-        """
+def _norm_date_parse(s: str) -> DateBetween:
+    if "norm_date" not in _dict:
+        _dict["norm_date"] = _l(
+            NORM_DATE_GRAMMAR_FILE,
+            parser="earley",
+            propagate_positions=False,
+            maybe_placeholders=False,
+        )
+    return transform(s, lark=_dict["norm_date"], transformer=NormDateTransformer())
 
-        :return:
-        """
-        return tuple(self.__extensions)
 
-    def add_extensions(self, *extensions: TransformerBase) -> Cn2Date:
-        """
+def _chine_date_parse(s: str) -> DateBetween:
+    if "chine_date" not in _dict:
+        _dict["chine_date"] = _l(
+            CHINE_DATE_GRAMMAR_FILE,
+            parser="lalr",
+            propagate_positions=False,
+            maybe_placeholders=False,
+        )
+    current = transform(
+        s,
+        lark=_dict["chine_date"],
+        transformer=ChineDateTransformer(),
+    )
+    if current is None:
+        dic = _h(s, ["ner/msra", "ner/ontonotes"])
+        for _, doc in dic.items():
+            for text, typ, _, _ in doc:
+                if typ != "DATE":
+                    continue
+                current = transform(
+                    text,
+                    lark=_dict["chine_date"],
+                    transformer=ChineDateTransformer(),
+                    dt=current,
+                )
+            if current is not None:
+                break
+    return current
 
-        :param extensions:
-        :return:
-        """
-        for extension in extensions:
-            self.__extensions.append(extension)
-        return self
 
-    def remove_extensions(self, *extensions: TransformerBase) -> Cn2Date:
-        """
+def _l(filepath: str, **options) -> Lark:
+    with open(filepath, encoding="utf8") as f:
+        lark = Lark(
+            f,
+            **options,
+        )
+    return lark
 
-        :param extensions:
-        :return:
-        """
-        for extension in extensions:
-            self.__extensions.remove(extension)
-        return self
 
-    def parse(self, text: str) -> tuple[datetime, datetime]:
-        """
-
-        :param text:
-        :return:
-        """
-        if text is None or text.isspace():
-            raise ValueError("The parameter text is None or empty")
-
-        if not any(self.__extensions):
-            raise IndexError("No extension is added")
-
-        transform_info = TransformInfo().initialize(text)
-        return self.__preceded(transform_info).to_tuple()
-
-    def __preceded(self, transform_info: TransformInfo) -> S2E:
-        """
-
-        :param transform_info:
-        :return:
-        """
-        for ext in self.__extensions:
-            if ext.initialize(transform_info).transform():
-                if transform_info.result is None:
-                    raise ValueError(f"Can't parse the text: {transform_info.input}")
-                return transform_info.result
-
-        raise ValueError(f"No extension could handle the text: {transform_info.input}")
+def _h(s: str, m=None, n: str = "default"):
+    if n not in _dict:
+        _dict[n] = hanlp.load(
+            hanlp.pretrained.mtl.CLOSE_TOK_POS_NER_SRL_DEP_SDP_CON_ELECTRA_SMALL_ZH
+        )
+    handoc = _dict[n](s)
+    if m is not None:
+        handoc = {k: handoc[k] for k in m}
+    return handoc

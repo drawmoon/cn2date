@@ -1,5 +1,5 @@
-pytest
-pyinstrument
+isort
+black
+
 pre-commit
-freezegun
 bumpversion

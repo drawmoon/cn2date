@@ -1,0 +1,67 @@
+# 解析常规口语化日期格式，例如：
+# 今年
+# 下半年
+
+
+start: date
+
+date           : years
+               | quarters
+               | months
+               | days
+               | weeks
+               | long_time
+
+years          : FIRST YEAR_UNIT
+               | _digit YEAR_UNIT ADVERB?
+quarters       : FIRST QUARTER_UNIT
+               | _digit "个"? QUARTER_UNIT ADVERB?
+months         : FIRST MONTH_UNIT
+               | _digit "个"? MONTH_UNIT ADVERB?
+weeks          : FIRST WEEK_UNIT
+               | _digit "个"? WEEK_UNIT ADVERB?
+days           : FIRST DAY_UNIT
+               | _digit DAY_UNIT ADVERB?
+long_time      : FIRST LONG_TIME_UNIT
+               | _digit LONG_TIME_UNIT ADVERB?
+
+_digit         : DIGIT
+               | CHINE_DIGIT
+
+FIRST          : "今"
+               | "本"
+               | "当前"
+               | "这个"
+               | "明"
+               | "昨"
+               | "去"
+               | "前"
+               | "后"
+               | "上半"
+               | "下半"
+               | "上"
+               | "上个"
+               | "下"
+               | "下个"
+ADVERB         : "以来"
+               | "以前"
+               | "以后"
+               | "之前"
+               | "之后"
+               | "前"
+               | "后"
+               | "内"
+               | "以内"
+               | "之内"
+YEAR_UNIT      : "年"
+QUARTER_UNIT   : "季度"
+MONTH_UNIT     : "月"
+WEEK_UNIT      : "周"
+               | "星期"
+DAY_UNIT       : "天"
+               | "日"
+LONG_TIME_UNIT : "午"
+CHINE_DIGIT : "两"
+DIGIT       : /["0-9零一二三四五六七八九十"]/
+
+%ignore " " | "份" | "度" | "第"
