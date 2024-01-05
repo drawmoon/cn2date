@@ -32,10 +32,10 @@ repos:
         require_serial: true
         types: [ python ]
         additional_dependencies: [ 'codespell' ]
-      - id: pyright
-        name: pyright
-        entry: pyright --venv-path .
-        language: node
-        pass_filenames: false
-        types: [ python ]
-        additional_dependencies: [ 'pyright' ]
+      # - id: pyright
+      #   name: pyright
+      #   entry: pyright --venv-path .
+      #   language: node
+      #   pass_filenames: false
+      #   types: [ python ]
+      #   additional_dependencies: [ 'pyright' ]

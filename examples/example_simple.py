@@ -7,7 +7,15 @@ sys.path.append(str(proj_dir))
 
 from cn2date import parse
 
-words = ["2021年", "二零二一年九月十七日", "今年", "本季度", "今天"]
+words = [
+    "2023年",
+    "二零二三年十二月二十一日",
+    "今年",
+    "本季度",
+]
 
 for word in words:
-    print(parse(word))
+    between = parse(word)
+    print(f"{word}:")
+    print(f"{between[0].datetime()} - {between[1].datetime()}")
+    print("-" * 30)

@@ -1,0 +1,51 @@
+# 解析常规日期格式，自动识别一些常用格式，包括：
+# yyyy-MM-dd
+# yyyy-MM
+# yyyy
+# yyyy/MM/dd
+# yyyy/MM
+# 2023年12月21日
+# 2023年12月
+# 2023年
+# 2023年12月21号
+# 2023年12月21
+
+# 也能识别混合的格式，不做格式限制，例如：
+# yyyy-MM/dd日
+
+
+start: date
+
+date   : years _year_delimiter months _month_delimiter days _day_delimiter?
+       | years _year_delimiter months _month_delimiter?
+       | months _month_delimiter days _day_delimiter?
+       | years _year_delimiter?
+       | months _month_delimiter?
+       | days _day_delimiter?
+
+years  : ZERO_NINE ZERO_NINE
+       | ONE_NINE ZERO_NINE ZERO_NINE ZERO_NINE
+
+months : ONE_NINE
+       | /[0零]/ ONE_NINE
+       | /[1一]/ /[0-2零一二]/
+       | /十/ /[12一二]/?
+
+days   : ONE_NINE
+       | /[0零]/ ONE_NINE
+       | /[12一二]/ ZERO_NINE
+       | /[2二]/? /十/
+       | /[2二]/? /十/ ONE_NINE
+       | /[3三]/ (/[01零一]/ | /十/ /[1一]/?)
+
+_year_delimiter  : "年"
+                 | _std_delimiter
+_month_delimiter : "月"
+                 | _std_delimiter
+_day_delimiter   : "日"
+                 | "号"
+_std_delimiter   : "-"
+                 | "/"
+
+ZERO_NINE : /[0-9零一二三四五六七八九]/
+ONE_NINE  : /[1-9一二三四五六七八九]/

@@ -1,4 +1,3 @@
-lark-parser
+lark
+hanlp
 python-dateutil
-typing-extensions
-tomli
