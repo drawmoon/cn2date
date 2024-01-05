@@ -93,7 +93,7 @@ class NormDateTransformer(Transformer):
             if self.begin.day == -1:
                 self.begin.day = 1
             self.end = DateTime.of(self.begin).end_of_month()
-        return self.begin, self.end
+        return DateBetween(self.begin, self.end)
 
 
 # 口语化日期格式转换器
@@ -242,4 +242,4 @@ class ChineDateTransformer(Transformer):
 
         tree = options.lark.parse(options.text)
         self._transform_tree(tree)
-        return self.begin, self.end
+        return DateBetween(self.begin, self.end)

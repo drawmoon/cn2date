@@ -17,5 +17,5 @@ words = [
 for word in words:
     between = parse(word)
     print(f"{word}:")
-    print(f"{between[0].datetime()} - {between[1].datetime()}")
-    print("-" * 30)
+    between.output()
+    print("-" * 50)

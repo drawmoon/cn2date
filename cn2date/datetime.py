@@ -1,6 +1,6 @@
 import calendar
 from datetime import datetime
-from typing import Tuple, TypeVar
+from typing import List, Tuple, TypeVar
 
 from dateutil.relativedelta import relativedelta
 
@@ -300,4 +300,11 @@ class DateTime:
         )
 
 
-DateBetween = TypeVar("DateBetween", bound=Tuple[DateTime, DateTime])
+class DateBetween(List[DateTime]):
+    def __init__(self, begin: DateTime, end: DateTime):
+        super().__init__()
+        self.append(begin)
+        self.append(end)
+
+    def output(self):
+        print(f"{self[0].datetime()} - {self[1].datetime()}")
