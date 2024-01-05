@@ -6,7 +6,7 @@ from freezegun import freeze_time
 from .cn2date import parse
 
 
-@freeze_time("2021-9-1")
+@freeze_time("2021-9-1 11:23:45")
 class Cn2DateTest(unittest.TestCase):
     def setUp(self) -> None:
         self.norm_data_dict = {

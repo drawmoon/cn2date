@@ -206,11 +206,11 @@ class ChineDateTransformer(Transformer):
                 s = s.replace(alias, k)
 
         it = {
-            "今天": DateTime.of(datetime.now()),
-            "明天": DateTime.of(datetime.now()).tomorrow(),
-            "后天": DateTime.of(datetime.now()).offset_day(2),
-            "昨天": DateTime.of(datetime.now()).yesterday(),
-            "前天": DateTime.of(datetime.now()).offset_day(-2),
+            "今天": DateTime.of(datetime.now()).begin_of_day(),
+            "明天": DateTime.of(datetime.now()).begin_of_day().tomorrow(),
+            "后天": DateTime.of(datetime.now()).begin_of_day().offset_day(2),
+            "昨天": DateTime.of(datetime.now()).begin_of_day().yesterday(),
+            "前天": DateTime.of(datetime.now()).begin_of_day().offset_day(-2),
         }
         if s in it:
             self.begin = it[s]
@@ -228,7 +228,7 @@ class ChineDateTransformer(Transformer):
 
         if s == "上午":
             n = datetime.now()
-            self.begin = DateTime.of(n)
+            self.begin = DateTime.of(n).begin_of_day()
             self.end = DateTime(n.year, n.month, n.day, 11, 59, 59, 999999)
         if s == "下午":
             n = datetime.now()
