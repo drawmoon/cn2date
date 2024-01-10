@@ -1,6 +1,6 @@
 import calendar
 from datetime import datetime
-from typing import List, Tuple, TypeVar
+from typing import List
 
 from dateutil.relativedelta import relativedelta
 
@@ -16,6 +16,10 @@ class DateTime:
         self.min = 0 if min is None else min
         self.sec = 0 if sec is None else sec
         self.millis = 0 if millis is None else millis
+
+    @staticmethod
+    def now():
+        return DateTime.of(datetime.now())
 
     @staticmethod
     def of(d):
