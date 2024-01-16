@@ -1,3 +1,4 @@
 lark
+hanlp
 python-dateutil
 cn2an
