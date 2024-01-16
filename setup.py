@@ -11,7 +11,7 @@ def get_long_description() -> str:
 if __name__ == "__main__":
     setup(
         name="cn2date",
-        version="0.1.1b1",
+        version="0.1.1",
         description="中文日期 、口语 转换为 日期字符串",
         author="drash",
         author_email="drawmoonsh@outlook.com.com",
