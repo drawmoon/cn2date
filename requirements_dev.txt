@@ -1,5 +1,0 @@
-isort
-black
-
-pre-commit
-bumpversion

@@ -22,9 +22,11 @@ class TransformOptions:
     lark: Optional[Lark]
     dt: Optional[DateTime]
 
-    _defaults = {"text": "", "lark": None, "transformer": None, "dt": None}
+    _defaults: Dict[str, Any]
 
     def __init__(self, options_dict: Dict[str, Any]):
+        self._defaults = {"text": "", "lark": None, "transformer": None, "dt": None}
+
         for name, default in self._defaults.items():
             if name not in options_dict:
                 setattr(self, name, default)
@@ -141,32 +143,34 @@ class ChineDateTransformer(Transformer):
                 if has_num_str.startswith("前"):
                     # 对“前几年”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 前三年，即“2018/1/1 00:00:00 - 2020/12/31 23:59:59”
+                    # 前三年, 即“2018/1/1 00:00:00 - 2020/12/31 23:59:59”
                     self.begin = DateTime.now().begin_of_year().offset_year(-arg)
                     self.end = DateTime.now().offset_year(-1).end_of_year()
                 elif has_num_str.startswith("后"):
                     # 对“后几年”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 后三年，即“2022/1/1 00:00:00 - 2024/12/31 23:59:59”
+                    # 后三年, 即“2022/1/1 00:00:00 - 2024/12/31 23:59:59”
                     self.begin = DateTime.now().begin_of_year().offset_year(1)
-                    self.end = DateTime.of(self.begin).offset_year(arg - 1).end_of_year()
+                    self.end = (
+                        DateTime.of(self.begin).offset_year(arg - 1).end_of_year()
+                    )
                 elif has_num_str.endswith("前"):
                     # 对“几年前”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 三年前，即“2018/1/1 00:00:00 - 2018/12/31 23:59:59”
+                    # 三年前, 即“2018/1/1 00:00:00 - 2018/12/31 23:59:59”
                     self.begin = DateTime.now().begin_of_year().offset_year(-arg)
                     self.end = DateTime.of(self.begin).end_of_year()
                 elif has_num_str.endswith("后"):
                     # 对“几年后”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 三年后，即“2024/1/1 00:00:00 - 2024/12/31 23:59:59”
+                    # 三年后, 即“2024/1/1 00:00:00 - 2024/12/31 23:59:59”
                     self.begin = DateTime.now().begin_of_year().offset_year(arg)
                     self.end = DateTime.of(self.begin).end_of_year()
                 elif has_num_str.endswith("内"):
                     # 对“几年内”的句式的处理
-                    # 在没有明确指定“过去”、“未来”的时，解释为过去式且包含今年
+                    # 在没有明确指定“过去”、“未来”的时, 解释为过去式且包含今年
                     # 比如当前时间是“2021/1/1”
-                    # 三年内，即“2019/1/1 00:00:00 - 2021/12/31 23:59:59”
+                    # 三年内, 即“2019/1/1 00:00:00 - 2021/12/31 23:59:59”
                     self.begin = DateTime.now().begin_of_year().offset_year(-(arg - 1))
                     self.end = DateTime.now().end_of_year()
 
@@ -196,7 +200,7 @@ class ChineDateTransformer(Transformer):
                     if has_num_str.startswith("前"):
                         # 对“前几季度”的句式的处理
                         # 比如当前时间是“2021/1/1”
-                        # 前三季度，即“2020/4/1 00:00:00 - 2020/12/31 23:59:59”
+                        # 前三季度, 即“2020/4/1 00:00:00 - 2020/12/31 23:59:59”
                         self.begin = (
                             DateTime.now().begin_of_quarter().offset_quarter(-arg)
                         )
@@ -204,7 +208,7 @@ class ChineDateTransformer(Transformer):
                     elif has_num_str.startswith("后"):
                         # 对“后几季度”的句式的处理
                         # 比如当前时间是“2021/1/1”
-                        # 后三季度，即“2021/4/1 00:00:00 - 2021/12/31 23:59:59”
+                        # 后三季度, 即“2021/4/1 00:00:00 - 2021/12/31 23:59:59”
                         self.begin = DateTime.now().begin_of_quarter().offset_quarter(1)
                         self.end = (
                             DateTime.of(self.begin)
@@ -214,7 +218,7 @@ class ChineDateTransformer(Transformer):
                     elif has_num_str.endswith("前"):
                         # 对“几季度前”的句式的处理
                         # 比如当前时间是“2021/1/1”
-                        # 三季度前，即“2020/4/1 00:00:00 - 2020/6/30 23:59:59”
+                        # 三季度前, 即“2020/4/1 00:00:00 - 2020/6/30 23:59:59”
                         self.begin = (
                             DateTime.now().begin_of_quarter().offset_quarter(-arg)
                         )
@@ -222,14 +226,16 @@ class ChineDateTransformer(Transformer):
                     elif has_num_str.endswith("后"):
                         # 对“几季度后”的句式的处理
                         # 比如当前时间是“2021/1/1”
-                        # 三季度后，即“2021/10/1 00:00:00 - 2021/12/31 23:59:59”
-                        self.begin = DateTime.now().begin_of_quarter().offset_quarter(arg)
+                        # 三季度后, 即“2021/10/1 00:00:00 - 2021/12/31 23:59:59”
+                        self.begin = (
+                            DateTime.now().begin_of_quarter().offset_quarter(arg)
+                        )
                         self.end = DateTime.of(self.begin).end_of_quarter()
                     elif has_num_str.endswith("内"):
                         # 对“几季度内”的句式的处理
-                        # 在没有明确指定“过去”、“未来”的时，解释为过去式且包含今年
+                        # 在没有明确指定“过去”、“未来”的时, 解释为过去式且包含今年
                         # 比如当前时间是“2021/1/1”
-                        # 三季度内，即“2020/7/1 00:00:00 - 2021/3/31 23:59:59”
+                        # 三季度内, 即“2020/7/1 00:00:00 - 2021/3/31 23:59:59”
                         self.begin = (
                             DateTime.now().begin_of_quarter().offset_quarter(-(arg - 1))
                         )
@@ -253,13 +259,13 @@ class ChineDateTransformer(Transformer):
                 if has_num_str.startswith("前"):
                     # 对“前几月”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 前三月，即“2020/10/1 00:00:00 - 2020/12/31 23:59:59”
+                    # 前三月, 即“2020/10/1 00:00:00 - 2020/12/31 23:59:59”
                     self.begin = DateTime.now().begin_of_month().offset_month(-arg)
                     self.end = DateTime.now().offset_month(-1).end_of_month()
                 elif has_num_str.startswith("后"):
                     # 对“后几月”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 后三月，即“2021/4/1 00:00:00 - 2021/4/30 23:59:59”
+                    # 后三月, 即“2021/4/1 00:00:00 - 2021/4/30 23:59:59”
                     self.begin = DateTime.now().begin_of_month().offset_month(1)
                     self.end = (
                         DateTime.of(self.begin).offset_month(arg - 1).end_of_month()
@@ -267,21 +273,23 @@ class ChineDateTransformer(Transformer):
                 elif has_num_str.endswith("前"):
                     # 对“几月前”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 三月前，即“2020/10/1 00:00:00 - 2020/12/31 23:59:59”
+                    # 三月前, 即“2020/10/1 00:00:00 - 2020/12/31 23:59:59”
                     self.begin = DateTime.now().begin_of_month().offset_month(-arg)
                     self.end = DateTime.of(self.begin).end_of_month()
                 elif has_num_str.endswith("后"):
                     # 对“几月后”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 三月后，即“2021/2/1 00:00:00 - 2020/4/30 23:59:59”
+                    # 三月后, 即“2021/2/1 00:00:00 - 2020/4/30 23:59:59”
                     self.begin = DateTime.now().begin_of_month().offset_month(arg)
                     self.end = DateTime.of(self.begin).end_of_month()
                 elif has_num_str.endswith("内"):
                     # 对“几月内”的句式的处理
-                    # 在没有明确指定“过去”、“未来”的时，解释为过去式且包含今月
+                    # 在没有明确指定“过去”、“未来”的时, 解释为过去式且包含今月
                     # 比如当前时间是“2021/1/1”
-                    # 三月内，即“2020/11/1 00:00:00 - 2021/1/31 23:59:59”
-                    self.begin = DateTime.now().begin_of_month().offset_month(-(arg - 1))
+                    # 三月内, 即“2020/11/1 00:00:00 - 2021/1/31 23:59:59”
+                    self.begin = (
+                        DateTime.now().begin_of_month().offset_month(-(arg - 1))
+                    )
                     self.end = DateTime.now().end_of_month()
 
     def weeks(self, children):
@@ -302,32 +310,34 @@ class ChineDateTransformer(Transformer):
                 if has_num_str.startswith("前"):
                     # 对“前几周”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 前三周，即“2020/12/7 00:00:00 - 2020/12/27 23:59:59”
+                    # 前三周, 即“2020/12/7 00:00:00 - 2020/12/27 23:59:59”
                     self.begin = DateTime.now().begin_of_week().offset_week(-arg)
                     self.end = DateTime.now().offset_week(-1).end_of_week()
                 elif has_num_str.startswith("后"):
                     # 对“后几周”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 后三周，即“2021/1/4 00:00:00 - 2021/1/24 23:59:59”
+                    # 后三周, 即“2021/1/4 00:00:00 - 2021/1/24 23:59:59”
                     self.begin = DateTime.now().begin_of_week().offset_week(1)
-                    self.end = DateTime.of(self.begin).offset_week(arg - 1).end_of_week()
+                    self.end = (
+                        DateTime.of(self.begin).offset_week(arg - 1).end_of_week()
+                    )
                 elif has_num_str.endswith("前"):
                     # 对“几周前”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 三周前，即“2020/12/7 00:00:00 - 2020/12/13 23:59:59”
+                    # 三周前, 即“2020/12/7 00:00:00 - 2020/12/13 23:59:59”
                     self.begin = DateTime.now().begin_of_week().offset_week(-arg)
                     self.end = DateTime.of(self.begin).end_of_week()
                 elif has_num_str.endswith("后"):
                     # 对“几周后”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 三周后，即“2021/1/18 00:00:00 - 2021/1/24 23:59:59”
+                    # 三周后, 即“2021/1/18 00:00:00 - 2021/1/24 23:59:59”
                     self.begin = DateTime.now().begin_of_week().offset_week(arg)
                     self.end = DateTime.of(self.begin).end_of_week()
                 elif has_num_str.endswith("内"):
                     # 对“几周内”的句式的处理
-                    # 在没有明确指定“过去”、“未来”的时，解释为过去式且包含今年
+                    # 在没有明确指定“过去”、“未来”的时, 解释为过去式且包含今年
                     # 比如当前时间是“2021/1/1”
-                    # 三周内，即“2020/12/14 00:00:00 - 2021/1/3 23:59:59”
+                    # 三周内, 即“2020/12/14 00:00:00 - 2021/1/3 23:59:59”
                     self.begin = DateTime.now().begin_of_week().offset_week(-(arg - 1))
                     self.end = DateTime.now().end_of_week()
 
@@ -351,32 +361,32 @@ class ChineDateTransformer(Transformer):
                 if has_num_str.startswith("前"):
                     # 对“前几天”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 前三天，即“2021/9/28 00:00:00 - 2021/9/30 23:59:59”
+                    # 前三天, 即“2021/9/28 00:00:00 - 2021/9/30 23:59:59”
                     self.begin = DateTime.now().begin_of_day().offset_day(-arg)
                     self.end = DateTime.now().offset_day(-1).end_of_day()
                 elif has_num_str.startswith("后"):
                     # 对“后几天”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 后三天，即“2021/10/2 00:00:00 - 2021/10/4 23:59:59”
+                    # 后三天, 即“2021/10/2 00:00:00 - 2021/10/4 23:59:59”
                     self.begin = DateTime.now().begin_of_day().offset_day(1)
                     self.end = DateTime.of(self.begin).offset_day(arg - 1).end_of_day()
                 elif has_num_str.endswith("前"):
                     # 对“几天前”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 三天前，即“2021/9/28 00:00:00 - 2021/9/28 23:59:59”
+                    # 三天前, 即“2021/9/28 00:00:00 - 2021/9/28 23:59:59”
                     self.begin = DateTime.now().begin_of_day().offset_day(-arg)
                     self.end = DateTime.of(self.begin).end_of_day()
                 elif has_num_str.endswith("后"):
                     # 对“几天后”的句式的处理
                     # 比如当前时间是“2021/1/1”
-                    # 三天后，即“2021/10/4 00:00:00 - 2021/10/4 23:59:59”
+                    # 三天后, 即“2021/10/4 00:00:00 - 2021/10/4 23:59:59”
                     self.begin = DateTime.now().begin_of_day().offset_day(arg)
                     self.end = DateTime.of(self.begin).end_of_day()
                 elif has_num_str.endswith("内"):
                     # 对“几天内”的句式的处理
-                    # 在没有明确指定“过去”、“未来”的时，解释为过去式且包含今天
+                    # 在没有明确指定“过去”、“未来”的时, 解释为过去式且包含今天
                     # 比如当前时间是“2021/1/1”
-                    # 三天内，即“2021/9/29 00:00:00 - 2021/10/1 23:59:59”
+                    # 三天内, 即“2021/9/29 00:00:00 - 2021/10/1 23:59:59”
                     self.begin = DateTime.now().begin_of_day().offset_day(-(arg - 1))
                     self.end = DateTime.now().end_of_day()
 
@@ -393,7 +403,7 @@ class ChineDateTransformer(Transformer):
             self.end = DateTime(n.year, n.month, n.day, 18, 59, 59, 999999)
 
     def transform(self, options: TransformOptions) -> DateBetween:
-        # 上一个分词段落处理完成的日期，如果是空，那么它是第一个词
+        # 上一个分词段落处理完成的日期, 如果是空, 那么它是第一个词
         if options.dt is not None:
             self.begin = options.dt
 

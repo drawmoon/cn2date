@@ -7,10 +7,10 @@ __version__: str = "0.1.1b2"
 
 
 __all__: list[str] = [
-    "__title__",
-    "__description__",
-    "__version__",
-    "DateTime",
     "DateBetween",
+    "DateTime",
+    "__description__",
+    "__title__",
+    "__version__",
     "parse",
 ]

@@ -309,6 +309,3 @@ class DateBetween(List[DateTime]):
         super().__init__()
         self.append(begin)
         self.append(end)
-
-    def output(self):
-        print(f"{self[0].datetime()} - {self[1].datetime()}")

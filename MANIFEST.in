@@ -7,3 +7,4 @@ recursive-include cn2date *
 recursive-exclude * .DS_Store
 recursive-exclude * __pycache__
 recursive-exclude * .pytest_cache
+recursive-exclude * .ruff_cache

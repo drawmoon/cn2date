@@ -1,9 +1,12 @@
-# [tool.pyright]
-# include = ["cn2date", "test"]
-# pythonVersion = "3.9"
-
-[tool.isort]
-profile = "black"
-
-[tool.black]
-line-length = 90
+[project]
+name = "cn2date"
+version = "0.1.1"
+requires-python = ">=3.10,<3.12"
+dependencies = [
+    "lark",
+    "python-dateutil",
+    "cn2an",
+    "bumpversion",
+    "freezegun",
+    "ruff"
+]
