@@ -4,7 +4,8 @@ default:
 
 # install dependencies
 install:
-  @uv pip install -r pyproject.toml
+  pip install -r requirements.txt
+  pip install -r requirements_dev.txt
 
 # check the code cleanliness
 check:
@@ -22,4 +23,4 @@ test:
 
 # generate pip lockfile
 lock:
-  @uv lock
+  @pip freeze > requirements.lock.txt
