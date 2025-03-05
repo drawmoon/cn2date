@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv env
+          uv venv
           just install
 
       - name: Test with pytest
