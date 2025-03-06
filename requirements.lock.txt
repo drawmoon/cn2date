@@ -1,0 +1,7 @@
+cn2an==0.5.23
+freezegun==1.5.1
+lark==1.2.2
+proces==0.1.7
+python-dateutil==2.9.0.post0
+ruff==0.9.9
+six==1.17.0
