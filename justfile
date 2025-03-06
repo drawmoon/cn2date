@@ -24,3 +24,17 @@ test:
 # generate pip lockfile
 lock:
   @pip freeze > requirements.lock.txt
+
+# package as wheel
+package:
+  rm -rf dist
+  python setup.py check
+  python -m build
+
+# publish package to pypi
+publish: package
+  python -m twine upload --repository pypi dist/*
+
+# update version
+version:
+  python -m bumpversion part

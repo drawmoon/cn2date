@@ -21,7 +21,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         install_requires=["lark", "python-dateutil", "cn2an"],
         include_package_data=True,
-        python_requires=">=3.7",
+        python_requires=">=3.9",
         license="MIT License",
         classifiers=[
             "Programming Language :: Python :: 3.9",

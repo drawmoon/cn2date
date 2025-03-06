@@ -1,2 +1,5 @@
 freezegun
 ruff
+build
+twine
+bumpversion
