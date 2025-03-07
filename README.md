@@ -1,6 +1,8 @@
 # cn2date
 
-[![Pypi Version][pypi-image]][pypi-url]
+[![image](https://img.shields.io/pypi/v/cn2date.svg)](https://pypi.python.org/pypi/cn2date)
+<!-- [![image](https://img.shields.io/pypi/pyversions/cn2date.svg)](https://pypi.python.org/pypi/cn2date) -->
+[![image](https://img.shields.io/pypi/l/cn2date.svg)](https://github.com/drawmoon/cn2date/blob/main/LICENSE)
 
 中文日期 、口语 转换为 日期字符串
 
@@ -31,6 +33,3 @@ parse("本季度").output()
 ## 许可证
 
 [MIT License](LICENSE)
-
-[pypi-image]: https://badge.fury.io/py/cn2date.svg
-[pypi-url]: https://pypi.org/project/cn2date/
