@@ -1,6 +1,7 @@
 # cn2date
 
-[![Pypi Version][pypi-image]][pypi-url]
+[![image](https://img.shields.io/pypi/v/cn2date.svg)](https://pypi.python.org/pypi/cn2date)
+[![image](https://img.shields.io/pypi/l/cn2date.svg)](https://github.com/drawmoon/cn2date/blob/main/LICENSE)
 
 中文日期 、口语 转换为 日期字符串
 
@@ -15,22 +16,28 @@ pip install cn2date
 ```python
 from cn2date import parse
 
-parse("2023年").output()
-# 输出结果：2023-01-01 00:00:00 - 2023-12-31 23:59:59.999999
 
-parse("二零二三年十二月二十一日").output()
-# 输出结果：2023-12-21 00:00:00 - 2023-12-21 23:59:59.999999
+def parse_input(input: str):
+    between = parse(input)
+    if not between:
+        raise RuntimeError()
 
-parse("今年").output()
-# 输出结果：2024-01-01 00:00:00 - 2024-12-31 23:59:59.999999
+    print([str(d.datetime()) for d in between])
 
-parse("本季度").output()
-# 输出结果：2024-01-01 00:00:00 - 2024-03-31 23:59:59.999999
+
+if __name__ == "__main__":
+    for x in ["2023年", "二零二三年十二月二十一日", "今年", "本季度"]:
+        parse_input(x)
+
+
+# 输出结果
+# ['2023-01-01 00:00:00', '2023-12-31 23:59:59.999999']
+# ['2023-12-21 00:00:00', '2023-12-21 23:59:59.999999']
+# ['2025-01-01 00:00:00', '2025-12-31 23:59:59.999999']
+# ['2025-07-01 00:00:00', '2025-09-30 23:59:59.999999']
+
 ```
 
 ## 许可证
 
 [MIT License](LICENSE)
-
-[pypi-image]: https://badge.fury.io/py/cn2date.svg
-[pypi-url]: https://pypi.org/project/cn2date/
