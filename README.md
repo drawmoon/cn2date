@@ -1,7 +1,6 @@
 # cn2date
 
 [![image](https://img.shields.io/pypi/v/cn2date.svg)](https://pypi.python.org/pypi/cn2date)
-<!-- [![image](https://img.shields.io/pypi/pyversions/cn2date.svg)](https://pypi.python.org/pypi/cn2date) -->
 [![image](https://img.shields.io/pypi/l/cn2date.svg)](https://github.com/drawmoon/cn2date/blob/main/LICENSE)
 
 中文日期 、口语 转换为 日期字符串
