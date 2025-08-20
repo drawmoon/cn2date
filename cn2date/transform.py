@@ -2,30 +2,31 @@ import re
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from cn2an import transform as cn2anTransform
+from cn2an import transform as ct
 from lark import Lark, ParseError, Transformer, UnexpectedCharacters
+from pydantic import BaseModel
 
-from .conf import (
-    CN_ALIAS,
-    DAY_ALIAS,
-    MONTH_ALIAS,
-    QUARTER_ALIAS,
-    WEEK_ALIAS,
-    YEAR_ALIAS,
-)
 from .datetime import DateBetween, DateTime
+from .exception import DateParseException
 
 
-class TransformOptions:
+CHINESE_MAPPINGS = {"本": "当前,这个,这", "内": "以内,之内", "以前": "之前"}
+YEAR_MAPPINGS = {"今": "本", "去年": "上年", "明年": "下年"}
+QUARTER_MAPPINGS = {"上": "上个", "下": "下个"}
+MONTH_MAPPINGS = {"上": "上个", "下": "下个"}
+WEEK_MAPPINGS = {"周": "星期", "上": "上个", "下": "下个"}
+DAY_MAPPINGS = {"天": "日"}
+
+
+class TransformOptions(BaseModel):
     text: str
-    transformer: Any
     lark: Optional[Lark]
     dt: Optional[DateTime]
 
     _defaults: Dict[str, Any]
 
     def __init__(self, options_dict: Dict[str, Any]):
-        self._defaults = {"text": "", "lark": None, "transformer": None, "dt": None}
+        self._defaults = {"text": "", "lark": None, "dt": None}
 
         for name, default in self._defaults.items():
             if name not in options_dict:
@@ -34,23 +35,21 @@ class TransformOptions:
                 setattr(self, name, options_dict[name])
 
 
-def transform(s: str, **options: Dict[str, Any]) -> Optional[DateBetween]:
-    try:
-        o = TransformOptions(options)
-        if o.transformer is None:
-            raise TypeError("Transformer is not specified")
-        o.text = s
-        return o.transformer.transform(o)
-    except UnexpectedCharacters:
-        return None
-    except ParseError:
-        return None
-    except Exception as e:
-        raise e
+class Cn2dateTransformer:
+    def _parse_result(self, options: TransformOptions) -> DateBetween: ...
+
+    def invoke(self, text: str, **kwords: Dict[str, Any]) -> Optional[DateBetween]:
+        try:
+            options = TransformOptions({**kwords, "text": text})
+            return self._parse_result(options)
+        except (UnexpectedCharacters, ParseError) as e:
+            msg = f"Invalid date string. Error: {e}"
+            raise DateParseException(msg)
 
 
-# 常规日期格式转换器
-class NormDateTransformer(Transformer):
+class NormDateTransformer(Cn2dateTransformer, Transformer):
+    """常规日期格式转换器"""
+
     begin: Optional[DateTime]
     end: Optional[DateTime]
 
@@ -62,7 +61,7 @@ class NormDateTransformer(Transformer):
     def years(self, children):
         year_str = "".join(str(token) for token in children)
         if not year_str.isspace():
-            year = int(cn2anTransform(year_str))
+            year = int(ct(year_str))
             year = (
                 int(f"{str(datetime.now().year)[0:2]}{year}")
                 if len(str(year)) == 2
@@ -73,16 +72,16 @@ class NormDateTransformer(Transformer):
     def months(self, children):
         mon_str = "".join(str(token) for token in children)
         if not mon_str.isspace():
-            mon = int(cn2anTransform(mon_str))
+            mon = int(ct(mon_str))
             self.begin.mon = mon
 
     def days(self, children):
         day_str = "".join(str(token) for token in children)
         if not day_str.isspace():
-            day = int(cn2anTransform(day_str))
+            day = int(ct(day_str))
             self.begin.day = day
 
-    def transform(self, options: TransformOptions) -> DateBetween:
+    def _parse_result(self, options: TransformOptions) -> DateBetween:
         tree = options.lark.parse(options.text)
         self._transform_tree(tree)
         if self.begin.mon == -1 and self.begin.day == -1:
@@ -100,8 +99,9 @@ class NormDateTransformer(Transformer):
         return DateBetween(self.begin, self.end)
 
 
-# 口语化日期格式转换器
-class ChineDateTransformer(Transformer):
+class ChineDateTransformer(Cn2dateTransformer, Transformer):
+    """口语化日期格式转换器"""
+
     begin: Optional[DateTime]
     end: Optional[DateTime]
 
@@ -121,7 +121,7 @@ class ChineDateTransformer(Transformer):
         return s
 
     def years(self, children):
-        s = self._get_str(children, {**CN_ALIAS, **YEAR_ALIAS})
+        s = self._get_str(children, {**CHINESE_MAPPINGS, **YEAR_MAPPINGS})
 
         it = {
             "今年": DateTime.now().begin_of_year(),
@@ -137,7 +137,7 @@ class ChineDateTransformer(Transformer):
             self.begin = DateTime.now().begin_of_year()
             self.end = DateTime(datetime.now().year, 6, 30, 23, 59, 59, 999999)
         else:
-            has_num_str = cn2anTransform(s)
+            has_num_str = ct(s)
             if re.search(r"\d", has_num_str):
                 arg = int(re.findall(r"\d+", has_num_str)[0])
                 if has_num_str.startswith("前"):
@@ -175,7 +175,7 @@ class ChineDateTransformer(Transformer):
                     self.end = DateTime.now().end_of_year()
 
     def quarters(self, children):
-        s = self._get_str(children, {**CN_ALIAS, **QUARTER_ALIAS})
+        s = self._get_str(children, {**CHINESE_MAPPINGS, **QUARTER_MAPPINGS})
 
         it = {
             "本季度": DateTime.now().begin_of_quarter(),
@@ -190,7 +190,7 @@ class ChineDateTransformer(Transformer):
             self.begin = it[s]
             self.end = DateTime.of(self.begin).end_of_quarter()
         else:
-            has_num_str = cn2anTransform(s)
+            has_num_str = ct(s)
             if re.search(r"\d", has_num_str):
                 if len(s) == 3 and s.endswith("季度") and has_num_str[0].isdigit():
                     self.begin = it[has_num_str]
@@ -242,7 +242,7 @@ class ChineDateTransformer(Transformer):
                         self.end = DateTime.now().end_of_quarter()
 
     def months(self, children):
-        s = self._get_str(children, {**CN_ALIAS, **MONTH_ALIAS})
+        s = self._get_str(children, {**CHINESE_MAPPINGS, **MONTH_MAPPINGS})
 
         it = {
             "本月": DateTime.now().begin_of_month(),
@@ -253,7 +253,7 @@ class ChineDateTransformer(Transformer):
             self.begin = it[s]
             self.end = DateTime.of(self.begin).end_of_month()
         else:
-            has_num_str = cn2anTransform(s)
+            has_num_str = ct(s)
             if re.search(r"\d", has_num_str):
                 arg = int(re.findall(r"\d+", has_num_str)[0])
                 if has_num_str.startswith("前"):
@@ -293,7 +293,7 @@ class ChineDateTransformer(Transformer):
                     self.end = DateTime.now().end_of_month()
 
     def weeks(self, children):
-        s = self._get_str(children, {**CN_ALIAS, **WEEK_ALIAS})
+        s = self._get_str(children, {**CHINESE_MAPPINGS, **WEEK_MAPPINGS})
 
         it = {
             "本周": DateTime.now().begin_of_week(),
@@ -304,7 +304,7 @@ class ChineDateTransformer(Transformer):
             self.begin = it[s]
             self.end = DateTime.of(self.begin).end_of_week()
         else:
-            has_num_str = cn2anTransform(s)
+            has_num_str = ct(s)
             if re.search(r"\d", has_num_str):
                 arg = int(re.findall(r"\d+", has_num_str)[0])
                 if has_num_str.startswith("前"):
@@ -342,7 +342,7 @@ class ChineDateTransformer(Transformer):
                     self.end = DateTime.now().end_of_week()
 
     def days(self, children):
-        s = self._get_str(children, {**CN_ALIAS, **DAY_ALIAS})
+        s = self._get_str(children, {**CHINESE_MAPPINGS, **DAY_MAPPINGS})
 
         it = {
             "今天": DateTime.now().begin_of_day(),
@@ -355,7 +355,7 @@ class ChineDateTransformer(Transformer):
             self.begin = it[s]
             self.end = DateTime.of(self.begin).end_of_day()
         else:
-            has_num_str = cn2anTransform(s)
+            has_num_str = ct(s)
             if re.search(r"\d", has_num_str):
                 arg = int(re.findall(r"\d+", has_num_str)[0])
                 if has_num_str.startswith("前"):
@@ -391,7 +391,7 @@ class ChineDateTransformer(Transformer):
                     self.end = DateTime.now().end_of_day()
 
     def long_time(self, children):
-        s = self._get_str(children, CN_ALIAS)
+        s = self._get_str(children, CHINESE_MAPPINGS)
 
         if s == "上午":
             n = datetime.now()
@@ -402,7 +402,7 @@ class ChineDateTransformer(Transformer):
             self.begin = DateTime(n.year, n.month, n.day, 12)
             self.end = DateTime(n.year, n.month, n.day, 18, 59, 59, 999999)
 
-    def transform(self, options: TransformOptions) -> DateBetween:
+    def _parse_result(self, options: TransformOptions) -> DateBetween:
         # 上一个分词段落处理完成的日期, 如果是空, 那么它是第一个词
         if options.dt is not None:
             self.begin = options.dt
